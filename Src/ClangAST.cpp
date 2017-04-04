@@ -12,9 +12,9 @@ bool MyVisitor::VisitCXXRecordDecl (CXXRecordDecl *D)
     llvm::outs () << "CXXRecord: " << D->getKindName ();
 
     if (D->getIdentifier ())
-        llvm::outs() << ", id: " << D->getIdentifier ()->getName ();
+        llvm::outs () << ", id: " << D->getIdentifier ()->getName ();
 
-    llvm::outs() << " | " << D->getQualifiedNameAsString () << "\n";
+    llvm::outs () << " | " << D->getQualifiedNameAsString () << "\n";
 
     // List base classes
     {
