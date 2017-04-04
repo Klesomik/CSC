@@ -15,13 +15,14 @@ int main (int argc, const char* argv[])
 	std::string buffer;
 	FillBuffer (argv[1], buffer);
 
-	return 0;
+	const bool ret = clang::tooling::runToolOnCode (new MyAction, buffer.c_str ());
+
+	return (ret? 0 : -1);
 }
 
 void FillBuffer (const char* name, std::string& buffer)
 {
 	std::ifstream in (name);
-	
-	std::string buffer;
+
 	std::getline (in, buffer, '\0');
 }
