@@ -27,10 +27,10 @@ bool MyVisitor::VisitCXXRecordDecl (CXXRecordDecl *D)
 
                 const QualType type = base.getType ();
                 const RecordType *recType = type->getAs<RecordType> ();
-                const CXXRecordDecl *cxxDecl = cast_or_null<CXXRecordDecl>(recType->getDecl ()->getDefinition ());
+                const CXXRecordDecl *cxxDecl = cast_or_null<CXXRecordDecl> (recType->getDecl ()->getDefinition ());
                 assert (cxxDecl);
 
-                llvm::outs () << type.getAsString() << " | " << cxxDecl->getQualifiedNameAsString ();
+                llvm::outs () << type.getAsString () << " | " << cxxDecl->getQualifiedNameAsString ();
 
                 if (base.isVirtual ())
                     llvm::outs () << " (virtual)";
@@ -40,7 +40,7 @@ bool MyVisitor::VisitCXXRecordDecl (CXXRecordDecl *D)
 
             llvm::outs () << "- All bases\n";
 
-            auto cb = [](const CXXRecordDecl *base, void *param)
+            auto cb = [] (const CXXRecordDecl *base, void *param)
             {
                 const CXXRecordDecl *D = reinterpret_cast<CXXRecordDecl*> (param);
 
@@ -61,7 +61,7 @@ bool MyVisitor::VisitCXXRecordDecl (CXXRecordDecl *D)
         }
 
         llvm::outs () << "- Methods\n";
-        for (auto i: D->methods ())
+        for (auto i : D->methods ())
             llvm::outs () << "- - " << (*i).getQualifiedNameAsString () << "\n";
     }
 

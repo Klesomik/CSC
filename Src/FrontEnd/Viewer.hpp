@@ -7,11 +7,3 @@ class Viewer
 
         void parsing (std::string& source);
 };
-
-Viewer::Viewer ():
-{
-}
-
-void Viewer::parsing (std::string& source)
-{
-}
