@@ -5,7 +5,7 @@ CodeInformation::CodeInformation ():
 {
 }
 
-void CodeInformation::parsing (const std::string& name)
+void CodeInformation::parsing (const std::string &name)
 {
     CompilerInstance ci;
 

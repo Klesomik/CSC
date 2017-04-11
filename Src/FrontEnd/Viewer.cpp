@@ -4,7 +4,7 @@ Viewer::Viewer ():
 {
 }
 
-void Viewer::parsing (std::string& source)
+void Viewer::parsing (std::string &source)
 {
     const int spaces_in_tab = 4;
 
