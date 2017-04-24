@@ -1,37 +1,36 @@
 #include "CodeInformation.hpp"
 
 CodeInformation::CodeInformation ():
+    ci   (),
     data ()
 {
 }
 
+void CodeInformation::clang_init (CompilerInstance &ci, const char* fileName)
+{
+    ci.createDiagnostics(); // create DiagnosticsEngine
+
+    // create TargetOptions
+    TargetOptions to;
+    to.Triple = llvm::sys::getDefaultTargetTriple();
+    // create TargetInfo
+    std::shared_ptr<clang::TargetOptions> tmp (new clang::TargetOptions (to));
+    TargetInfo *pti = TargetInfo::CreateTargetInfo(ci.getDiagnostics(), tmp);
+    ci.setTarget(pti);
+
+    ci.createFileManager();                      // create FileManager
+    ci.createSourceManager(ci.getFileManager()); // create SourceManager
+    ci.createPreprocessor(TU_Complete);          // create Preprocessor
+
+	const clang::FileEntry *file = ci.getFileManager().getFile(fileName);
+    	if (!file) {
+            llvm::errs() << "File not found: " << fileName;
+            return;
+    	}
+    	clang::FileID mainFileID = ci.getSourceManager().createFileID(file, clang::SourceLocation(), 		clang::SrcMgr::C_User);
+    	ci.getSourceManager().setMainFileID(mainFileID);
+}
+
 void CodeInformation::parsing (const std::string &name)
 {
-    CompilerInstance ci;
-
-    ci.createDiagnostics (0, NULL); // create DiagnosticsEngine
-    ci.createFileManager ();  // create FileManager
-    ci.createSourceManager (ci.getFileManager ()); // create SourceManager
-    ci.createPreprocessor ();  // create Preprocessor
-    const FileEntry *pFile = ci.getFileManager ().getFile (name.c_str ());
-    ci.getSourceManager ().createMainFileID (pFile);
-    ci.getPreprocessor ().EnterMainSourceFile ();
-    ci.getDiagnosticClient ().BeginSourceFile (ci.getLangOpts (), &ci.getPreprocessor ());
-
-    Token tok;
-    do
-    {
-        ci.getPreprocessor ().Lex (tok);
-
-        if( ci.getDiagnostics ().hasErrorOccurred ())
-            break;
-
-        //ci.getPreprocessor ().DumpToken (tok);
-        data.push_back (tok);
-
-        //std::cerr << std::endl;
-    }
-    while (tok.isNot (clang::tok::eof));
-
-    ci.getDiagnosticClient ().EndSourceFile ();
 }

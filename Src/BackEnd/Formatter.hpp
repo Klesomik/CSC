@@ -1,5 +1,6 @@
 #include <iostream>
 #include <map>
+#include "..//Statistics.hpp"
 
 class Formatter
 {
