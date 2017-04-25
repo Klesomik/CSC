@@ -4,7 +4,7 @@
 //#include "FrontEnd//CodeInformation.hpp"
 #include "BackEnd//Formatter.hpp"
 
-void FillBuffer (const char* name, std::string& buffer);
+void FillBuffer (const std::string &name, std::string& buffer);
 
 int main (int argc, const char* argv[])
 {
@@ -23,15 +23,19 @@ int main (int argc, const char* argv[])
 	Viewer viewer;
            viewer.parsing (buffer);
 
-    //CodeInformation code_information;
-
     Formatter formatter;
               formatter.parsing (buffer);
+
+    CodeInformation code_information (buffer);
+                    code_information.compiler_instance_init ();
+                    code_information.lexer_init ();
+                    code_information.fill_raw_tokens ();
+                    code_information.parsing (formatter.data);
 
 	return 0;
 }
 
-void FillBuffer (const char* name, std::string& buffer)
+void FillBuffer (const std::string &name, std::string& buffer)
 {
 	std::ifstream in (name);
 

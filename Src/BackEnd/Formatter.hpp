@@ -1,6 +1,6 @@
 #include <iostream>
 #include <map>
-#include "..//Statistics.hpp"
+#include "Statistics.hpp"
 
 class Formatter
 {
@@ -9,8 +9,8 @@ class Formatter
 
         void parsing (std::string &buffer);
 
-    private:
-        std::map <std::string, Statistics> data;
+    //private:
+        std::map<std::string, Statistics> data;
 
         bool check (const std::string &from, const std::string &to, int index);
 };

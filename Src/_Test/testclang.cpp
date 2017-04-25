@@ -57,7 +57,7 @@ void ClangInit (CompilerInstance &ci, const char* fileName)
     ci.createFileManager();                      // create FileManager
     ci.createSourceManager(ci.getFileManager()); // create SourceManager
     ci.createPreprocessor(TU_Complete);          // create Preprocessor
-    
+
 	const clang::FileEntry *file = ci.getFileManager().getFile(fileName);
     	if (!file) {
             llvm::errs() << "File not found: " << fileName;
@@ -71,23 +71,23 @@ void PrintRawTokens (CompilerInstance &ci, Lexer &raw, std::vector<Token> &to)
 {
     for (Token tok;;)
     {
-	raw.LexFromRawLexer (tok);
-	
-	if (tok.is (clang::tok::eof))
-	    break;
+        raw.LexFromRawLexer (tok);
 
-	to.push_back (tok);
+        if (tok.is (clang::tok::eof))
+            break;
+
+        to.push_back (tok);
     }
 }
 
 void PrintPreprocessedTokens (CompilerInstance &ci, std::vector<Token> &to)
 {
-    for (Token tok;;) 
+    for (Token tok;;)
     {
         ci.getPreprocessor().Lex(tok);
 
-	if (tok.is (clang::tok::eof))
-	    break;
+        if (tok.is (clang::tok::eof))
+            break;
 
         if (ci.getDiagnostics ().hasErrorOccurred ())
             break;
@@ -100,7 +100,7 @@ void PrintTokens (CompilerInstance &ci, std::vector<Token> &data)
 {
     for (int i = 0; i < (int) data.size (); i++)
     {
-	ci.getPreprocessor ().DumpToken (data[i]);
+        ci.getPreprocessor ().DumpToken (data[i]);
         std::cerr << std::endl;
     }
 }
