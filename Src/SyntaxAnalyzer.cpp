@@ -1,8 +1,8 @@
 #include <iostream>
 #include <fstream>
-#include "FrontEnd//Viewer.hpp"
+#include "FrontEnd//Viewer.cpp"
 //#include "FrontEnd//CodeInformation.hpp"
-#include "BackEnd//Formatter.hpp"
+#include "BackEnd//Formatter.cpp"
 
 void FillBuffer (const std::string &name, std::string& buffer);
 
@@ -24,13 +24,17 @@ int main (int argc, const char* argv[])
            viewer.parsing (buffer);
 
     Formatter formatter;
+
+    Statistics tmp = { 10, 10, 1 };
+
+    formatter.data.insert (std::make_pair ("if", tmp));
               formatter.parsing (buffer);
 
-    CodeInformation code_information (buffer);
+    /*CodeInformation code_information (buffer);
                     code_information.compiler_instance_init ();
                     code_information.lexer_init ();
                     code_information.fill_raw_tokens ();
-                    code_information.parsing (formatter.data);
+                    code_information.parsing (formatter.data);*/
 
 	return 0;
 }

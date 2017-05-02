@@ -13,4 +13,5 @@ class Formatter
         std::map<std::string, Statistics> data;
 
         bool check (const std::string &from, const std::string &to, int index);
+        void delete_spaces (std::string &result);
 };

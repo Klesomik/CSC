@@ -1,6 +1,6 @@
 #include "Viewer.hpp"
 
-Viewer::Viewer ():
+Viewer::Viewer ()
 {
 }
 
@@ -10,7 +10,7 @@ void Viewer::parsing (std::string &source)
 
     std::string tmp;
 
-    for (int i = 0; i < source.size (); i++)
+    for (int i = 0; i < (int) source.size (); i++)
     {
         if (source[i] == '\n')
         {
