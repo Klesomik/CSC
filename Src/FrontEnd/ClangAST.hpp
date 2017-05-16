@@ -1,3 +1,7 @@
+#ifndef CLANGAST_HPP
+
+#define CLANGAST_HPP
+
 class MyVisitor : public clang::RecursiveASTVisitor<MyVisitor>
 {
     public:
@@ -32,3 +36,5 @@ class MyAction : public clang::ASTFrontendAction
             return ASTConsumerPtr (new MyConsumer);
         }
 };
+
+#endif /* CLANGAST_HPP */

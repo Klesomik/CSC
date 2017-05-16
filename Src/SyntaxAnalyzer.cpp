@@ -27,6 +27,7 @@ int main (int argc, const char* argv[])
 
     CodeInformation code_information (argv[1]);
                     code_information.compiler_instance_init ();
+                    code_information.result_init (formatter.data);
                     code_information.fill_raw_tokens ();
                     code_information.print_tokens ();
                     code_information.detour_AST ();

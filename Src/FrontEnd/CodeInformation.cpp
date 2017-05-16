@@ -46,6 +46,11 @@ void CodeInformation::compiler_instance_init ()
     ci.getDiagnosticClient ().BeginSourceFile (ci.getLangOpts (), &ci.getPreprocessor ());
 }
 
+void CodeInformation::result_init (std::map<std::string, Statistics> &result)
+{
+    result.insert (std::make_pair ("if", Statistics ({ 0, 0, 0 })));
+}
+
 void CodeInformation::fill_raw_tokens ()
 {
     const llvm::MemoryBuffer *from_file = ci.getSourceManager ().getBuffer (ci.getSourceManager ().getMainFileID ());
@@ -86,7 +91,7 @@ void CodeInformation::detour_AST ()
     std::string buffer;
     FillBuffer (file_name, buffer);
 
-    /* const bool ret = */  
+    /* const bool ret = */
     clang::tooling::runToolOnCode (new MyAction, buffer.c_str ());
 }
 
@@ -102,9 +107,6 @@ void CodeInformation::print_tokens ()
 
 void CodeInformation::parsing (std::map<std::string, Statistics> &result)
 {
-    Statistics tmp = { 0, 0, 0 };
-    result.insert (std::make_pair ("if", tmp));
-
 	for (int i = 0; i < (int) data.size (); i++)
 	{
         for (auto it = result.begin (); it != result.end (); it++)

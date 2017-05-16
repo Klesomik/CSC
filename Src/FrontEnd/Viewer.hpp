@@ -1,3 +1,7 @@
+#ifndef VIEWER_HPP
+
+#define VIEWER_HPP
+
 #include <iostream>
 
 class Viewer
@@ -7,3 +11,5 @@ class Viewer
 
         void parsing (std::string &source);
 };
+
+#endif /* VIEWER_HPP */

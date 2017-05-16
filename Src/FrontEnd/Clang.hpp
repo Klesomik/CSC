@@ -1,3 +1,7 @@
+#ifndef CLANG_HPP
+
+#define CLANG_HPP
+
 #include "stdint.h"
 #include "clang/AST/ASTConsumer.h"
 #include "clang/AST/ASTContext.h"
@@ -30,3 +34,5 @@
 #include <cstring>
 
 using namespace clang;
+
+#endif /* CLANG_HPP */

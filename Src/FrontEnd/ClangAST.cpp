@@ -11,7 +11,7 @@ bool MyVisitor::VisitCXXRecordDecl (clang::CXXRecordDecl *D)
 {
     llvm::outs () << "CXXRecord: " << D->getKindName ();
 
-    llvm::outs () << '\n' << '\t' << "NUMBER: " << table[D->getLocation ()] << '\n';
+    //llvm::outs () << "\n\t" << "NUMBER: " << table[D->getLocation ()] << '\n';
 
     if (D->getIdentifier ())
         llvm::outs () << ", id: " << D->getIdentifier ()->getName ();
@@ -30,6 +30,8 @@ bool MyVisitor::VisitCXXRecordDecl (clang::CXXRecordDecl *D)
 bool MyVisitor::VisitIfStmt (clang::IfStmt *D)
 {
     llvm::outs () << "IfStmt " << '\n';
+
+    llvm::outs () << table[D->getIfLoc ()] << '\n';
 
     return true;
 }
