@@ -27,4 +27,4 @@ LIBS += $(shell $(LLVMCONF) --ldflags) \
 LIBS += $(shell $(LLVMCONF) --system-libs)
 
 all:
-	$(CXX) $(CXXFLAGS) -o ./a.out testclang.cpp $(LIBS)
+	$(CXX) $(CXXFLAGS) -o ./a.out SyntaxAnalyzer.cpp $(LIBS)

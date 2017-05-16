@@ -28,3 +28,5 @@
 #include <cassert>
 #include <map>
 #include <cstring>
+
+using namespace clang;

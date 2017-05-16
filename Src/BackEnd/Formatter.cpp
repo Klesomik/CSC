@@ -1,4 +1,4 @@
-#include "Formatter.hpp"
+//#include "Formatter.hpp"
 
 Formatter::Formatter ():
     data ()
@@ -45,8 +45,6 @@ bool Formatter::check (const std::string &from, const std::string &to, int index
 {
     if (index + to.size () - 1 >= from.size ())
         return false;
-
-    int tmp = index;
 
     for (int j = 0; (index < (int) from.size ()) && (j < (int) to.size ()); index++, j++)
         if (from[index] != to[j])

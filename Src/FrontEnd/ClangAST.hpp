@@ -1,17 +1,13 @@
-#include "Clang.hpp"
-
-using namespace clang;
-
 class MyVisitor : public clang::RecursiveASTVisitor<MyVisitor>
 {
     public:
         bool VisitTranslationUnitDecl (clang::TranslationUnitDecl *D);
 
         // Class' declarations
-        bool VisitCXXRecordDecl (CXXRecordDecl *D);
+        bool VisitCXXRecordDecl (clang::CXXRecordDecl *D);
 
-        // Namespace's declarations
-        bool VisitNamespaceDecl (NamespaceDecl *D);
+        // If's declarations
+        bool VisitIfStmt (clang::IfStmt *D);
 };
 
 class MyConsumer : public clang::ASTConsumer

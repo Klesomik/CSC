@@ -1,4 +1,6 @@
-#include "CodeInformation.hpp"
+//#include "CodeInformation.hpp"
+#include "ClangAST.hpp"
+#include "ClangAST.cpp"
 
 CodeInformation::CodeInformation ():
     file_name (),
@@ -26,14 +28,14 @@ void CodeInformation::compiler_instance_init ()
     TargetInfo *pti = TargetInfo::CreateTargetInfo (ci.getDiagnostics(), tmp);
     ci.setTarget (pti);
 
-    ci.createFileManager ();                       // create FileManager
+    ci.createFileManager   ();                     // create FileManager
     ci.createSourceManager (ci.getFileManager ()); // create SourceManager
-    ci.createPreprocessor (TU_Complete);           // create Preprocessor
+    ci.createPreprocessor  (TU_Complete);          // create Preprocessor
 
 	const clang::FileEntry *file = ci.getFileManager ().getFile (file_name.c_str ());
     if (!file)
     {
-        llvm::errs () << "File not found: " << file_name;
+        llvm::errs () << "File not found: " << file_name << '\n';
         return;
     }
 
@@ -44,15 +46,12 @@ void CodeInformation::compiler_instance_init ()
     ci.getDiagnosticClient ().BeginSourceFile (ci.getLangOpts (), &ci.getPreprocessor ());
 }
 
-void CodeInformation::lexer_init ()
-{
-    const llvm::MemoryBuffer *from_file = ci.getSourceManager ().getBuffer (ci.getSourceManager ().getMainFileID ());
-	raw = Lexer (ci.getSourceManager ().getMainFileID (), from_file, ci.getSourceManager (), ci.getPreprocessor ().getLangOpts ());
-	raw.SetKeepWhitespaceMode (true);
-}
-
 void CodeInformation::fill_raw_tokens ()
 {
+    const llvm::MemoryBuffer *from_file = ci.getSourceManager ().getBuffer (ci.getSourceManager ().getMainFileID ());
+    Lexer raw (ci.getSourceManager ().getMainFileID (), from_file, ci.getSourceManager (), ci.getPreprocessor ().getLangOpts ());
+    raw.SetKeepWhitespaceMode (true);
+
     for (Token tok;;)
     {
         raw.LexFromRawLexer (tok);
@@ -61,6 +60,8 @@ void CodeInformation::fill_raw_tokens ()
             break;
 
         data.push_back (tok);
+
+        table[tok.getLocation ()] = data.size () - 1;
     }
 }
 
@@ -80,10 +81,20 @@ void CodeInformation::fill_preprocessed_tokens ()
     }
 }
 
+void CodeInformation::detour_AST ()
+{
+    std::string buffer;
+    FillBuffer (file_name, buffer);
+
+    /* const bool ret = */  
+    clang::tooling::runToolOnCode (new MyAction, buffer.c_str ());
+}
+
 void CodeInformation::print_tokens ()
 {
     for (int i = 0; i < (int) data.size (); i++)
     {
+        std::cerr << "data[" << i << "] = ";
         ci.getPreprocessor ().DumpToken (data[i]);
         std::cerr << std::endl;
     }
@@ -91,7 +102,8 @@ void CodeInformation::print_tokens ()
 
 void CodeInformation::parsing (std::map<std::string, Statistics> &result)
 {
-    result.insert ("if", { 0, 0, 0 });
+    Statistics tmp = { 0, 0, 0 };
+    result.insert (std::make_pair ("if", tmp));
 
 	for (int i = 0; i < (int) data.size (); i++)
 	{
@@ -99,8 +111,6 @@ void CodeInformation::parsing (std::map<std::string, Statistics> &result)
             if (is_token (data[i], it->first))
                 add_statistics (i, it->second);
 	}
-
-	return result;
 }
 
 void CodeInformation::add_statistics (int i, Statistics &result)
@@ -128,7 +138,7 @@ void CodeInformation::add_statistics (int i, Statistics &result)
 
 bool CodeInformation::is_token (Token &from, const std::string &to)
 {
-	std::string buffer (getSpelling (from));
+	std::string buffer (Lexer::getSpelling (from, ci.getSourceManager (), ci.getLangOpts ()));
 
 	return buffer == to;
 }

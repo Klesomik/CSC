@@ -1,7 +1,9 @@
 #include <iostream>
 #include <vector>
 #include "Clang.hpp"
-#include "BackEnd//Statistics.hpp"
+#include "..//BackEnd//Statistics.hpp"
+
+std::map<SourceLocation, int> table;
 
 class CodeInformation
 {
@@ -10,10 +12,11 @@ class CodeInformation
         CodeInformation (const std::string &set_file_name);
 
         void compiler_instance_init ();
-        void lexer_init ();
 
         void fill_raw_tokens ();
         void fill_preprocessed_tokens ();
+
+        void detour_AST ();
 
         void print_tokens ();
 
@@ -23,10 +26,9 @@ class CodeInformation
         bool is_token (Token &from, const std::string &to);
 
     //private:
-        const std::string file_name;
+        std::string file_name;
 
         CompilerInstance ci;
-        Lexer raw;
 
         std::vector<Token> data;
 };

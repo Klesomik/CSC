@@ -1,16 +1,18 @@
 #include <iostream>
 #include <fstream>
+#include "Tools.hpp"
 #include "FrontEnd//Viewer.hpp"
-//#include "FrontEnd//CodeInformation.hpp"
+#include "FrontEnd//Viewer.cpp"
+#include "FrontEnd//CodeInformation.hpp"
+#include "FrontEnd//CodeInformation.cpp"
 #include "BackEnd//Formatter.hpp"
-
-void FillBuffer (const std::string &name, std::string& buffer);
+#include "BackEnd//Formatter.cpp"
 
 int main (int argc, const char* argv[])
 {
 	if (argc != 2)
 	{
-		std::cout << "Few arguments";
+		std::cout << "Few arguments\n";
 
 		return 0;
 	}
@@ -18,27 +20,19 @@ int main (int argc, const char* argv[])
 	std::string buffer;
 	FillBuffer (argv[1], buffer);
 
-	//const bool ret = clang::tooling::runToolOnCode (new MyAction, buffer.c_str ());
-
 	Viewer viewer;
            viewer.parsing (buffer);
 
     Formatter formatter;
 
-    /*CodeInformation code_information (buffer);
+    CodeInformation code_information (argv[1]);
                     code_information.compiler_instance_init ();
-                    code_information.lexer_init ();
                     code_information.fill_raw_tokens ();
-                    code_information.parsing (formatter.data);*/
+                    code_information.print_tokens ();
+                    code_information.detour_AST ();
+                    //code_information.parsing (formatter.data);
 
-    formatter.parsing (buffer);
+    //formatter.parsing (buffer);
 
 	return 0;
-}
-
-void FillBuffer (const std::string &name, std::string& buffer)
-{
-	std::ifstream in (name);
-
-	std::getline (in, buffer, '\0');
 }
