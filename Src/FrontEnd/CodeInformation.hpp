@@ -7,8 +7,6 @@
 #include "Clang.hpp"
 #include "..//BackEnd//Statistics.hpp"
 
-std::map<SourceLocation, int> table;
-
 class CodeInformation
 {
     public:
@@ -25,8 +23,6 @@ class CodeInformation
 
         void print_tokens ();
 
-        void parsing (std::map<std::string, Statistics> &result);
-
         void add_statistics (int i, Statistics &result);
         bool is_token (Token &from, const std::string &to);
 
@@ -36,6 +32,11 @@ class CodeInformation
         CompilerInstance ci;
 
         std::vector<Token> data;
+
+        std::map<SourceLocation, int> table;
 };
+
+// TODO: delete global object
+CodeInformation code_information;
 
 #endif /* CODEINFORMATION_HPP */

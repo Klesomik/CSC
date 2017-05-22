@@ -2,7 +2,7 @@
 
 bool MyVisitor::VisitTranslationUnitDecl (clang::TranslationUnitDecl *D)
 {
-    D->dump ();
+    //D->dump ();
 
     return true;
 }
@@ -29,9 +29,9 @@ bool MyVisitor::VisitCXXRecordDecl (clang::CXXRecordDecl *D)
 
 bool MyVisitor::VisitIfStmt (clang::IfStmt *D)
 {
-    llvm::outs () << "IfStmt " << '\n';
+    //llvm::outs () << "IfStmt: " << code_information.table[D->getIfLoc ()] << '\n';
 
-    llvm::outs () << table[D->getIfLoc ()] << '\n';
+    code_information.add_statistics (code_information.table[D->getIfLoc ()], formatter.data["if"]);
 
     return true;
 }

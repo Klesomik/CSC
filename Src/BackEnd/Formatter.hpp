@@ -4,7 +4,7 @@
 
 #include <iostream>
 #include <map>
-//#include "Statistics.hpp"
+#include "Statistics.hpp"
 
 class Formatter
 {
@@ -19,5 +19,8 @@ class Formatter
         bool check (const std::string &from, const std::string &to, int index);
         void delete_spaces (std::string &result);
 };
+
+// TODO: delete global object
+Formatter formatter;
 
 #endif /* FORMATTER_HPP */

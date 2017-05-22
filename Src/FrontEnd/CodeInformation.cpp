@@ -89,7 +89,7 @@ void CodeInformation::fill_preprocessed_tokens ()
 void CodeInformation::detour_AST ()
 {
     std::string buffer;
-    FillBuffer (file_name, buffer);
+    FromFile (file_name, buffer);
 
     /* const bool ret = */
     clang::tooling::runToolOnCode (new MyAction, buffer.c_str ());
@@ -105,22 +105,21 @@ void CodeInformation::print_tokens ()
     }
 }
 
-void CodeInformation::parsing (std::map<std::string, Statistics> &result)
-{
-	for (int i = 0; i < (int) data.size (); i++)
-	{
-        for (auto it = result.begin (); it != result.end (); it++)
-            if (is_token (data[i], it->first))
-                add_statistics (i, it->second);
-	}
-}
-
 void CodeInformation::add_statistics (int i, Statistics &result)
 {
     for (int j = i - 1; j >= 0; j--)
     {
         if (is_token (data[j], " "))
-            result.prefix += 1;
+        {
+            std::string buffer (Lexer::getSpelling (data[j], ci.getSourceManager (), ci.getLangOpts ()));
+
+            int counter = 0;
+            for (int i = 0; i < (int) buffer.size (); i++)
+                if (buffer[i] == ' ')
+                    counter++;
+
+            result.prefix += counter;
+        }
 
         else
             break;
@@ -129,7 +128,16 @@ void CodeInformation::add_statistics (int i, Statistics &result)
     for (int j = i + 1; j < (int) data.size (); j++)
     {
         if (is_token (data[j], " "))
-            result.suffix += 1;
+        {
+            std::string buffer (Lexer::getSpelling (data[j], ci.getSourceManager (), ci.getLangOpts ()));
+
+            int counter = 0;
+            for (int i = 0; i < (int) buffer.size (); i++)
+                if (buffer[i] == ' ')
+                    counter++;
+
+            result.suffix += counter;
+        }
 
         else
             break;
@@ -141,6 +149,13 @@ void CodeInformation::add_statistics (int i, Statistics &result)
 bool CodeInformation::is_token (Token &from, const std::string &to)
 {
 	std::string buffer (Lexer::getSpelling (from, ci.getSourceManager (), ci.getLangOpts ()));
+
+    if (to == " ")
+    {
+        for (int i = 0; i < (int) buffer.size(); i++)
+            if (buffer[i] == ' ')
+                return true;
+    }
 
 	return buffer == to;
 }
