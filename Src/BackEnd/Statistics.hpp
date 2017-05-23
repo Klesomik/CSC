@@ -5,9 +5,14 @@
 class Statistics
 {
     public:
-        int prefix, suffix, counter;
+        void mediana_first ();
+        void mediana_second ();
+        void maximum_first ();
+        void maximum_second ();
 
-        //std::vector<std::pair <int, int>> mediana;
+        std::vector<std::pair <int, int>> data;
+
+        std::pair <int, int> result;
 };
 
 #endif /* STATISTICS_HPP */

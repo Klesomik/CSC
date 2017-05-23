@@ -11,6 +11,7 @@ class Formatter
     public:
         Formatter ();
 
+        void prepare_data ();
         void parsing (std::string &buffer);
 
     //private:

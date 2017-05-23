@@ -6,6 +6,7 @@
 #include <vector>
 #include "Clang.hpp"
 #include "..//BackEnd//Statistics.hpp"
+#include "..//BackEnd//Statistics.cpp"
 
 class CodeInformation
 {

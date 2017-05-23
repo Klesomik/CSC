@@ -7,6 +7,7 @@ Viewer::Viewer ()
 void Viewer::parsing (std::string &source)
 {
     const int spaces_in_tab = 4;
+    std::string spaces (' ', spaces_in_tab);
 
     std::string tmp;
 
@@ -22,11 +23,7 @@ void Viewer::parsing (std::string &source)
         }
 
         else if (source[i] == '\t')
-        {
-            std::string spaces (' ', spaces_in_tab);
-
             tmp += spaces;
-        }
 
         else
             tmp.push_back (source[i]);

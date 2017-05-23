@@ -5,6 +5,15 @@ Formatter::Formatter ():
 {
 }
 
+void Formatter::prepare_data ()
+{
+    for (auto it = data.begin (); it != data.end (); it++)
+    {
+        it->second.mediana_first ();
+        it->second.mediana_second ();
+    }
+}
+
 void Formatter::parsing (std::string& buffer)
 {
     std::string result;
@@ -18,9 +27,9 @@ void Formatter::parsing (std::string& buffer)
             {
                 delete_spaces (result);
 
-                result += std::string (it->second.prefix / it->second.counter, ' ');
+                result += std::string (it->second.result.first, ' ');
                 result += it->first;
-                result += std::string (it->second.suffix / it->second.counter, ' ');
+                result += std::string (it->second.result.second, ' ');
 
                 i += (it->first.size () - 1);
 
