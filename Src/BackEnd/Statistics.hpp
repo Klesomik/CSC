@@ -10,9 +10,9 @@ class Statistics
         void maximum_first ();
         void maximum_second ();
 
-        std::vector<std::pair <int, int>> data;
+        std::vector<std::pair<int, int>> data;
 
-        std::pair <int, int> result;
+        std::pair<int, int> result;
 };
 
 #endif /* STATISTICS_HPP */
