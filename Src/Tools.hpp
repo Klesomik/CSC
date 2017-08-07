@@ -1,3 +1,7 @@
+#ifndef TOOLS_HPP
+
+#define TOOLS_HPP
+
 void FromFile (const std::string &name, std::string &buffer);
 void ToFile (const std::string &name, std::string &buffer);
 
@@ -14,3 +18,5 @@ void ToFile (const std::string &name, std::string &buffer)
 
 	out << buffer;
 }
+
+#endif /* TOOLS_HPP */

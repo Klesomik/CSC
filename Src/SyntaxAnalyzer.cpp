@@ -2,11 +2,8 @@
 #include <fstream>
 #include "Tools.hpp"
 #include "FrontEnd//Viewer.hpp"
-#include "FrontEnd//Viewer.cpp"
 #include "BackEnd//Formatter.hpp"
-#include "BackEnd//Formatter.cpp"
 #include "FrontEnd//CodeInformation.hpp"
-#include "FrontEnd//CodeInformation.cpp"
 
 int main (int argc, const char* argv[])
 {
