@@ -21,6 +21,9 @@ class Formatter
         void delete_spaces (std::string &result);
 };
 
+// TODO: delete global object
+Formatter formatter;
+
 Formatter::Formatter ():
     data ()
 {
@@ -93,8 +96,5 @@ void Formatter::delete_spaces (std::string &result)
         result.pop_back ();
     }
 }
-
-// TODO: delete global object
-Formatter formatter;
 
 #endif /* FORMATTER_HPP */

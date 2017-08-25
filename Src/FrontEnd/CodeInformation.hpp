@@ -5,8 +5,7 @@
 #include <iostream>
 #include <vector>
 #include "Clang.hpp"
-#include "ClangAST.hpp"
-#include "..//BackEnd//Statistics.hpp"
+#include "..//Backend//Statistics.hpp"
 
 /*
 This class makes all work with Clang API
@@ -25,7 +24,7 @@ class CodeInformation
         void fill_raw_tokens ();
         void fill_preprocessed_tokens ();
 
-        void detour_AST ();
+        void detour_AST (const std::string& buffer);
 
         void print_tokens ();
 
@@ -41,6 +40,11 @@ class CodeInformation
 
         std::map<SourceLocation, int> table;
 };
+
+// TODO: delete global object
+CodeInformation code_information;
+
+#include "ClangAST.hpp"
 
 CodeInformation::CodeInformation ():
     file_name (),
@@ -88,7 +92,9 @@ void CodeInformation::compiler_instance_init ()
 
 void CodeInformation::result_init (std::map<std::string, Statistics> &result)
 {
-    result.insert (std::make_pair ("if", Statistics ({ 0, 0, 0 })));
+    Statistics tmp;
+
+    result.insert (std::make_pair ("if", tmp));
 }
 
 void CodeInformation::fill_raw_tokens ()
@@ -97,12 +103,9 @@ void CodeInformation::fill_raw_tokens ()
     Lexer raw (ci.getSourceManager ().getMainFileID (), from_file, ci.getSourceManager (), ci.getPreprocessor ().getLangOpts ());
     raw.SetKeepWhitespaceMode (true);
 
-    for (Token tok;;)
+    for (Token tok; !tok.is (clang::tok::eof);)
     {
         raw.LexFromRawLexer (tok);
-
-        if (tok.is (clang::tok::eof))
-            break;
 
         data.push_back (tok);
 
@@ -112,12 +115,9 @@ void CodeInformation::fill_raw_tokens ()
 
 void CodeInformation::fill_preprocessed_tokens ()
 {
-    for (Token tok;;)
+    for (Token tok; !tok.is (clang::tok::eof);)
     {
         ci.getPreprocessor ().Lex (tok);
-
-        if (tok.is (clang::tok::eof))
-            break;
 
         if (ci.getDiagnostics ().hasErrorOccurred ())
             break;
@@ -126,11 +126,8 @@ void CodeInformation::fill_preprocessed_tokens ()
     }
 }
 
-void CodeInformation::detour_AST ()
+void CodeInformation::detour_AST (const std::string& buffer)
 {
-    std::string buffer;
-    FromFile (file_name, buffer);
-
     /* const bool ret = */
     clang::tooling::runToolOnCode (new MyAction, buffer.c_str ());
 }
@@ -158,7 +155,7 @@ void CodeInformation::add_statistics (int i, Statistics &result)
                 if (buffer[i] == ' ')
                     counter++;
 
-            result.prefix += counter;
+            //result.prefix += counter;
         }
 
         else
@@ -176,14 +173,14 @@ void CodeInformation::add_statistics (int i, Statistics &result)
                 if (buffer[i] == ' ')
                     counter++;
 
-            result.suffix += counter;
+            //result.suffix += counter;
         }
 
         else
             break;
     }
 
-    result.counter += 1;
+    //result.counter += 1;
 }
 
 bool CodeInformation::is_token (Token &from, const std::string &to)
@@ -199,8 +196,5 @@ bool CodeInformation::is_token (Token &from, const std::string &to)
 
     return buffer == to;
 }
-
-// TODO: delete global object
-CodeInformation code_information;
 
 #endif /* CODEINFORMATION_HPP */
