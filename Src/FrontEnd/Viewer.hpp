@@ -15,16 +15,19 @@ class Viewer
         Viewer ();
 
         void parsing (std::string& source);
+
+    private:
+        int spaces_in_tab;
 };
 
-Viewer::Viewer ()
+Viewer::Viewer ():
+    spaces_in_tab (4)
 {
 }
 
 void Viewer::parsing (std::string& source)
 {
-    const int spaces_in_tab = 4;
-    std::string spaces (' ', spaces_in_tab);
+    std::string spaces (spaces_in_tab, ' ');
 
     std::string tmp;
 

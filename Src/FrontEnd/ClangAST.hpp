@@ -66,9 +66,7 @@ bool MyVisitor::VisitCXXRecordDecl (clang::CXXRecordDecl *D)
 
 bool MyVisitor::VisitIfStmt (clang::IfStmt *D)
 {
-    //llvm::outs () << "IfStmt: " << code_information.table[D->getIfLoc ()] << '\n';
-
-    code_information.add_statistics (code_information.table[D->getIfLoc ()], formatter.data["if"]);
+    code_information.add_statistics (D->getIfLoc (), formatter.data["if"]);
 
     return true;
 }

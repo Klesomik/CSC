@@ -16,9 +16,8 @@ class CodeInformation
 {
     public:
         CodeInformation ();
-        CodeInformation (const std::string &set_file_name);
 
-        void compiler_instance_init ();
+        void compiler_instance_init (const std::string& file_name);
         void result_init (std::map<std::string, Statistics> &result);
 
         void fill_raw_tokens ();
@@ -28,12 +27,10 @@ class CodeInformation
 
         void print_tokens ();
 
-        void add_statistics (int i, Statistics &result);
+        void add_statistics (SourceLocation loc, Statistics &result);
         bool is_token (Token &from, const std::string &to);
 
     //private:
-        std::string file_name;
-
         CompilerInstance ci;
 
         std::vector<Token> data;
@@ -47,20 +44,12 @@ CodeInformation code_information;
 #include "ClangAST.hpp"
 
 CodeInformation::CodeInformation ():
-    file_name (),
     ci        (),
     data      ()
 {
 }
 
-CodeInformation::CodeInformation (const std::string &set_file_name):
-    file_name (set_file_name),
-    ci        (),
-    data      ()
-{
-}
-
-void CodeInformation::compiler_instance_init ()
+void CodeInformation::compiler_instance_init (const std::string& file_name)
 {
     ci.createDiagnostics(); // create DiagnosticsEngine
 
@@ -107,6 +96,9 @@ void CodeInformation::fill_raw_tokens ()
     {
         raw.LexFromRawLexer (tok);
 
+        if (is_token (tok, "if"))
+            std::cout << "fill_raw_tokens " << data.size () << '\n';
+
         data.push_back (tok);
 
         table[tok.getLocation ()] = data.size () - 1;
@@ -123,6 +115,8 @@ void CodeInformation::fill_preprocessed_tokens ()
             break;
 
         data.push_back (tok);
+
+        table[tok.getLocation ()] = data.size () - 1;
     }
 }
 
@@ -142,51 +136,34 @@ void CodeInformation::print_tokens ()
     }
 }
 
-void CodeInformation::add_statistics (int i, Statistics &result)
+void CodeInformation::add_statistics (SourceLocation loc, Statistics &result)
 {
-    for (int j = i - 1; j >= 0; j--)
+    int raw_index = code_information.table[loc];
+
+    result.data.push_back (std::pair <int, int> (0, 0));
+
+    // search prefix
+    if ((raw_index - 1 >= 0) && (is_token (data[raw_index - 1], " ")))
     {
-        if (is_token (data[j], " "))
-        {
-            std::string buffer (Lexer::getSpelling (data[j], ci.getSourceManager (), ci.getLangOpts ()));
+        std::string buffer (Lexer::getSpelling (data[raw_index - 1], ci.getSourceManager (), ci.getLangOpts ()));
 
-            int counter = 0;
-            for (int i = 0; i < (int) buffer.size (); i++)
-                if (buffer[i] == ' ')
-                    counter++;
-
-            //result.prefix += counter;
-        }
-
-        else
-            break;
+        result.data.back ().first += std::count (buffer.begin (), buffer.end (), ' ');
     }
 
-    for (int j = i + 1; j < (int) data.size (); j++)
+    // search suffix
+    if ((raw_index + 1 < (int) data.size ()) && (is_token (data[raw_index + 1], " ")))
     {
-        if (is_token (data[j], " "))
-        {
-            std::string buffer (Lexer::getSpelling (data[j], ci.getSourceManager (), ci.getLangOpts ()));
+        std::string buffer (Lexer::getSpelling (data[raw_index + 1], ci.getSourceManager (), ci.getLangOpts ()));
 
-            int counter = 0;
-            for (int i = 0; i < (int) buffer.size (); i++)
-                if (buffer[i] == ' ')
-                    counter++;
-
-            //result.suffix += counter;
-        }
-
-        else
-            break;
+        result.data.back ().second += std::count (buffer.begin (), buffer.end (), ' ');
     }
-
-    //result.counter += 1;
 }
 
 bool CodeInformation::is_token (Token &from, const std::string &to)
 {
     std::string buffer (Lexer::getSpelling (from, ci.getSourceManager (), ci.getLangOpts ()));
 
+    // Because Clang's tokens can be like that: "     ".
     if (to == " ")
     {
         for (int i = 0; i < (int) buffer.size(); i++)
