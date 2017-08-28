@@ -44,16 +44,22 @@ bool MyVisitor::VisitTranslationUnitDecl (clang::TranslationUnitDecl *D)
     return true;
 }
 
+/*
+This visitor visits declarations of structs/classes
+*/
 bool MyVisitor::VisitCXXRecordDecl (clang::CXXRecordDecl *D)
 {
-    llvm::outs () << D->getIdentifier ()->getName () << '\n'; // return readable name of struct/class
+    information.result[Information::Class].add_statistics (D->getIdentifier ()->getName ());
 
     for (auto it : D->methods ())
-        llvm::outs () << it->getIdentifier ()->getName () << '\n'; // return readable name of methods
+        information.result[Information::Method].add_statistics (it->getIdentifier ()->getName ());
 
     return true;
 }
 
+/*
+This visitor visits operators if and else
+*/
 bool MyVisitor::VisitIfStmt (clang::IfStmt *D)
 {
     code_information.add_statistics (D->getIfLoc (), formatter.data["if"]);

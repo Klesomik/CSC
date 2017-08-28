@@ -7,38 +7,43 @@ class NameStyle
 	public:
 		NameStyle ();
 
-		bool is_first (const std::string& name);
-		bool is_second (const std::string& name);
-		bool is_third (const std::string& name);
+		bool check_style (const std::string& name, const std::string& style);
 
 		void add_statistics (const std::string& name);
 
-		int first,  // camelCase
-			second, // camel_case 
-			third;  // CamelCase
+		std::map <std::string, int> data;
+
+		int no_style;
 };
 
 NameStyle::NameStyle ():
-	first (0),
-	second (0),
-	third (0)
+	data ({ { "[a-z]+([A-Z]+[a-z]*)*", 0 },    // camelCase
+			{ "[a-z]+(_[a-z]+)*",      0 },    // camel_case 
+			{ "([A-Z]+[a-z]*)+",       0 } }), // CamelCase
+	no_style (0)		 
 {
 }
 
-bool NameStyle::is_first (const std::string& name)
+bool NameStyle::check_style (const std::string& name, const std::string& style)
 {
-}
+	std::cmatch result;
 
-bool NameStyle::is_second (const std::string& name)
-{
-}
-
-bool NameStyle::is_third (const std::string& name)
-{
+	return std::regex_match (name.c_str (), result, std::regex (style));
 }
 
 void NameStyle::add_statistics (const std::string& name)
 {
+	for (auto it = data.begin (); it != data.end (); it++)
+	{
+		if (check_style (name, it->first))
+		{
+			it->second++;
+
+			return;
+		}
+	}
+
+	no_style++;
 }
 
 #endif /* NAMESTYLE_HPP */
