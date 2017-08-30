@@ -1,8 +1,11 @@
 #include <bits/stdc++.h>
-#include "Tools.hpp"
-#include "Frontend//Viewer.hpp"
-#include "Backend//Formatter.hpp"
+#include "LogHTML.hpp"
+#include "Frontend//InformationCollector.hpp"
 #include "Frontend//CodeInformation.hpp"
+#include "Frontend//ClangAST.hpp"
+#include "Backend//Information.hpp"
+
+void HTMLDump ();
 
 int main (int argc, const char* argv[])
 {
@@ -25,29 +28,22 @@ int main (int argc, const char* argv[])
 	for (int i = 0; i < (int) args.size (); i++)
 		args[i] = argv[i];
 
-	std::string buffer;
-	FromFile (args[1], buffer);
+	information_collector.name = args[1];
+	information_collector.parsing ();
 
-	Viewer viewer;
-           viewer.parsing (buffer);
+	CodeInformation code_information;
+					code_information.fill_raw_tokens ();
+					code_information.fill_table ();
 
-    code_information.compiler_instance_init (args[1]);
-    code_information.result_init (formatter.data);
-    code_information.fill_raw_tokens ();
+	Detour detour;
+		   detour.start ();
 
-    code_information.print_tokens ();
-    code_information.detour_AST (buffer);
-    //code_information.parsing (formatter.data);
-
-    /*formatter.prepare_data ();
-    formatter.parsing (buffer);
-
-    ToFile (args[1] + ".res", buffer);*/
-
-    /*Statistics tmp = formatter.data["if"];
-
-    for (int i = 0; i < (int) tmp.data.size (); i++)
-    	std::cout << "(" << tmp.data[i].first << ", " << tmp.data[i].second << ")\n";*/
+	HTMLDump ();
 
 	return 0;
+}
+
+// Todo
+void HTMLDump ()
+{
 }

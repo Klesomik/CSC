@@ -2,54 +2,38 @@
 
 #define CODEINFORMATION_HPP
 
-#include <iostream>
-#include <vector>
 #include "Clang.hpp"
-#include "..//Backend//Statistics.hpp"
+#include "InformationCollector.hpp"
 
 /*
 This class makes all work with Clang API
 Now we give buffer and get information about formatting
 */
 
+#define ci information_collector.ci
+
 class CodeInformation
 {
     public:
         CodeInformation ();
 
-        void compiler_instance_init (const std::string& file_name);
-        void result_init (std::map<std::string, Statistics> &result);
+        void compiler_instance_init ();
 
         void fill_raw_tokens ();
         void fill_preprocessed_tokens ();
+        void fill_table ();
 
-        void detour_AST (const std::string& buffer);
-
-        void print_tokens ();
-
-        void add_statistics (SourceLocation loc, Statistics &result);
         bool is_token (Token &from, const std::string &to);
 
     //private:
-        CompilerInstance ci;
-
-        std::vector<Token> data;
-
-        std::map<SourceLocation, int> table;
 };
 
-// TODO: delete global object
-CodeInformation code_information;
-
-#include "ClangAST.hpp"
-
-CodeInformation::CodeInformation ():
-    ci        (),
-    data      ()
+CodeInformation::CodeInformation ()
 {
+    compiler_instance_init ();
 }
 
-void CodeInformation::compiler_instance_init (const std::string& file_name)
+void CodeInformation::compiler_instance_init ()
 {
     ci.createDiagnostics(); // create DiagnosticsEngine
 
@@ -65,10 +49,10 @@ void CodeInformation::compiler_instance_init (const std::string& file_name)
     ci.createSourceManager (ci.getFileManager ()); // create SourceManager
     ci.createPreprocessor  (TU_Complete);          // create Preprocessor
 
-    const clang::FileEntry *file = ci.getFileManager ().getFile (file_name.c_str ());
+    const clang::FileEntry *file = ci.getFileManager ().getFile (information_collector.name.c_str ());
     if (!file)
     {
-        llvm::errs () << "File not found: " << file_name << '\n';
+        llvm::errs () << "File not found: " << information_collector.name << '\n';
         return;
     }
 
@@ -77,13 +61,6 @@ void CodeInformation::compiler_instance_init (const std::string& file_name)
 
     ci.getPreprocessor ().EnterMainSourceFile ();
     ci.getDiagnosticClient ().BeginSourceFile (ci.getLangOpts (), &ci.getPreprocessor ());
-}
-
-void CodeInformation::result_init (std::map<std::string, Statistics> &result)
-{
-    Statistics tmp;
-
-    result.insert (std::make_pair ("if", tmp));
 }
 
 void CodeInformation::fill_raw_tokens ()
@@ -96,12 +73,7 @@ void CodeInformation::fill_raw_tokens ()
     {
         raw.LexFromRawLexer (tok);
 
-        if (is_token (tok, "if"))
-            std::cout << "fill_raw_tokens " << data.size () << '\n';
-
-        data.push_back (tok);
-
-        table[tok.getLocation ()] = data.size () - 1;
+        information_collector.data.push_back (tok);
     }
 }
 
@@ -114,64 +86,14 @@ void CodeInformation::fill_preprocessed_tokens ()
         if (ci.getDiagnostics ().hasErrorOccurred ())
             break;
 
-        data.push_back (tok);
-
-        table[tok.getLocation ()] = data.size () - 1;
+        information_collector.data.push_back (tok);
     }
 }
 
-void CodeInformation::detour_AST (const std::string& buffer)
+void CodeInformation::fill_table ()
 {
-    /* const bool ret = */
-    clang::tooling::runToolOnCode (new MyAction, buffer.c_str ());
-}
-
-void CodeInformation::print_tokens ()
-{
-    for (int i = 0; i < (int) data.size (); i++)
-    {
-        std::cerr << "data[" << i << "] = ";
-        ci.getPreprocessor ().DumpToken (data[i]);
-        std::cerr << std::endl;
-    }
-}
-
-void CodeInformation::add_statistics (SourceLocation loc, Statistics &result)
-{
-    int raw_index = code_information.table[loc];
-
-    result.data.push_back (std::pair <int, int> (0, 0));
-
-    // search prefix
-    if ((raw_index - 1 >= 0) && (is_token (data[raw_index - 1], " ")))
-    {
-        std::string buffer (Lexer::getSpelling (data[raw_index - 1], ci.getSourceManager (), ci.getLangOpts ()));
-
-        result.data.back ().first += std::count (buffer.begin (), buffer.end (), ' ');
-    }
-
-    // search suffix
-    if ((raw_index + 1 < (int) data.size ()) && (is_token (data[raw_index + 1], " ")))
-    {
-        std::string buffer (Lexer::getSpelling (data[raw_index + 1], ci.getSourceManager (), ci.getLangOpts ()));
-
-        result.data.back ().second += std::count (buffer.begin (), buffer.end (), ' ');
-    }
-}
-
-bool CodeInformation::is_token (Token &from, const std::string &to)
-{
-    std::string buffer (Lexer::getSpelling (from, ci.getSourceManager (), ci.getLangOpts ()));
-
-    // Because Clang's tokens can be like that: "     ".
-    if (to == " ")
-    {
-        for (int i = 0; i < (int) buffer.size(); i++)
-            if (buffer[i] == ' ')
-                return true;
-    }
-
-    return buffer == to;
+    for (int i = 0; i < (int) information_collector.data.size (); i++) 
+        information_collector.table[information_collector.data[i].getLocation ()] = i;
 }
 
 #endif /* CODEINFORMATION_HPP */

@@ -2,6 +2,10 @@
 
 #define CLANGAST_HPP
 
+#include "Clang.hpp"
+#include "InformationCollector.hpp"
+#include "..//Backend//Information.hpp"
+
 class MyVisitor : public clang::RecursiveASTVisitor<MyVisitor>
 {
     public:
@@ -37,6 +41,24 @@ class MyAction : public clang::ASTFrontendAction
         }
 };
 
+class Detour
+{
+    public:
+        Detour ();
+
+        void start ();
+};
+
+Detour::Detour ()
+{
+}
+
+void Detour::start ()
+{
+    /* const bool ret = */
+    clang::tooling::runToolOnCode (new MyAction, information_collector.buffer.c_str ());
+}
+
 bool MyVisitor::VisitTranslationUnitDecl (clang::TranslationUnitDecl *D)
 {
     //D->dump ();
@@ -62,7 +84,7 @@ This visitor visits operators if and else
 */
 bool MyVisitor::VisitIfStmt (clang::IfStmt *D)
 {
-    code_information.add_statistics (D->getIfLoc (), formatter.data["if"]);
+    information_collector.add_statistics (D->getIfLoc (), information.data["if"]);
 
     return true;
 }

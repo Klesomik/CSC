@@ -17,9 +17,10 @@ class NameStyle
 };
 
 NameStyle::NameStyle ():
-	data ({ { "[a-z]+([A-Z]+[a-z]*)*", 0 },    // camelCase
-			{ "[a-z]+(_[a-z]+)*",      0 },    // camel_case 
-			{ "([A-Z]+[a-z]*)+",       0 } }), // CamelCase
+	data ({ { "[a-z]+([A-Z]+[a-z]*)+",           0 },    // camelCase
+			{ "[a-z]+(_[a-z]+)*",                0 },    // camel_case 
+			{ "([A-Z]+[a-z]*)+",                 0 },    // CamelCase
+			{ "([A-Z]+[a-z]*)+(_[A-Z]+[a-z]*)+", 0 } }), // Camel_Case
 	no_style (0)		 
 {
 }

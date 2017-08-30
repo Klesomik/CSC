@@ -10,6 +10,7 @@ class Information
 	public:
 		Information ();
 
+		void result_init ();
 		void prepare_data ();
 
 		enum
@@ -33,6 +34,13 @@ Information::Information ():
 	data   (),
 	result (4)
 {
+}
+
+void Information::result_init ()
+{
+    SyntaxStyle tmp;
+
+    data.insert (std::make_pair ("if", tmp));
 }
 
 void Information::prepare_data ()
