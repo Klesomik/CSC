@@ -14,15 +14,12 @@ class InformationCollector
         void print_tokens ();
 
         bool is_token (Token &from, const std::string &to);
-        SourceLocation preprocessed_to_raw (SourceLocation loc);
         void simulate (SourceLocation loc);
 
     //private:
         std::vector <Token> data;
 
         std::map <SourceLocation, int> table;
-
-        int spaces_in_tab;
 
         CompilerInstance ci;
 };
@@ -33,7 +30,6 @@ InformationCollector information_collector;
 InformationCollector::InformationCollector ():
 	data (),
 	table (),
-	spaces_in_tab (4),
 	ci ()
 {
 }
@@ -86,13 +82,10 @@ bool InformationCollector::is_token (Token &from, const std::string &to)
     return buffer == to;
 }
 
-SourceLocation InformationCollector::preprocessed_to_raw (SourceLocation loc)
-{
-	return ci.getSourceManager ().getExpansionLoc (loc);
-}
-
 void InformationCollector::simulate (SourceLocation loc)
 {
+    // SourceLocation preprocessed_to_raw (SourceLocation loc);
+
 	FullSourceLoc tmp (loc, ci.getSourceManager());
 
     // TODO: What's the difference between spelling and expansion?

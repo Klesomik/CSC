@@ -34,6 +34,7 @@ int main (int argc, const char* argv[])
 	file_snapshot.name = args[1];
 	file_snapshot.from_file ();
 	file_snapshot.parsing ();
+	file_snapshot.print_buffer ();
 
 	CppFrontend ();
 	Backend ();
@@ -45,8 +46,12 @@ int main (int argc, const char* argv[])
 void CppFrontend ()
 {
 	ClangLexicialAnalyzer clang_lexicial_analyzer;
-					      clang_lexicial_analyzer.fill_preprocessed_tokens ();
+					      clang_lexicial_analyzer.fill_raw_tokens ();
 					      clang_lexicial_analyzer.fill_table ();
+
+	information_collector.print_tokens ();
+
+	information_collector.simulate (information_collector.data[18].getLocation ());
 
 	ClangSyntaxAnalyzer clang_syntax_analyzer;
 		                clang_syntax_analyzer.start ();

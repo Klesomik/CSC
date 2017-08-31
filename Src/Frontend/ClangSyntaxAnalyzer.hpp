@@ -79,6 +79,8 @@ class ClangSyntaxAnalyzer
     public:
         ClangSyntaxAnalyzer ();
 
+        void prepare ();
+        CompilerInvocation* makeInvocation ();
         void start ();
 };
 
@@ -86,10 +88,59 @@ ClangSyntaxAnalyzer::ClangSyntaxAnalyzer ()
 {
 }
 
+void ClangSyntaxAnalyzer::prepare ()
+{
+    //instance.createDiagnostics();
+
+    instance.setInvocation(makeInvocation());
+    instance.getFrontendOpts().Inputs.emplace_back
+    (
+        FILENAME, 
+        FrontendOptions::getInputKindForExtension(FILENAME)
+    );
+}
+
+CompilerInvocation* ClangSyntaxAnalyzer::makeInvocation ()
+{
+    using namespace clang;
+    auto invocation = new CompilerInvocation();
+
+    invocation->TargetOpts->Triple = llvm::sys::getDefaultTargetTriple();
+    invocation->setLangDefaults(
+        *invocation->getLangOpts(), 
+        IK_CXX, 
+        llvm::Triple(invocation->TargetOpts->Triple), 
+        invocation->getPreprocessorOpts(), 
+        LangStandard::lang_cxx11);
+
+    auto& headerSearchOpts = invocation->getHeaderSearchOpts();
+
+    #ifdef PRINT_HEADER_SEARCH_PATHS
+        headerSearchOpts.Verbose = true;
+    #else
+        headerSearchOpts.Verbose = false;
+    #endif
+
+    headerSearchOpts.UseBuiltinIncludes = true;
+    headerSearchOpts.UseStandardSystemIncludes = true;
+    headerSearchOpts.UseStandardCXXIncludes = true;
+    headerSearchOpts.ResourceDir = RESOURCE_DIR;
+
+    for (const auto sytemHeader : SYSTEM_HEADERS)
+    {
+        headerSearchOpts.AddPath(sytemHeader, frontend::System, false, false);
+    }
+
+    return invocation;
+}
+
 void ClangSyntaxAnalyzer::start ()
 {
-    /* const bool ret = */
-    clang::tooling::runToolOnCode (new MyAction, file_snapshot.buffer.c_str ());
+    //const bool ret = clang::tooling::runToolOnCode (new MyAction, file_snapshot.buffer.c_str ());
+
+    MyAction my_action;
+
+    ci.ExecuteAction (my_action);
 }
 
 #endif /* CLANGSYNTAXANALYZER_HPP */

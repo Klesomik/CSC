@@ -12,8 +12,12 @@ class FileSnapshot
         void to_file ();
         void parsing ();
 
+        void print_buffer ();
+
 	//private:
 		std::string name, buffer;
+
+        int spaces_in_tab;
 };
 
 // TODO: delete global object
@@ -21,7 +25,8 @@ FileSnapshot file_snapshot;
 
 FileSnapshot::FileSnapshot ():
 	name (),
-	buffer ()
+	buffer (),
+    spaces_in_tab (4)
 {
 }
 
@@ -67,6 +72,12 @@ void FileSnapshot::parsing ()
     }
 
     buffer = tmp;
+}
+
+void FileSnapshot::print_buffer ()
+{
+    for (int i = 0; i < (int) file_snapshot.buffer.size (); i++)
+        printf ("buffer[%d] = |%c|\n", i, file_snapshot.buffer[i]);
 }
 
 #endif /* FILESNAPSHOT_HPP */
