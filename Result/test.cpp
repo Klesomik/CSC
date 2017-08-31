@@ -1,10 +1,3 @@
-struct Value
-{
-	int data;
-	
-	void print ();
-};
-
 int main ()
 {
 	int a = 5;

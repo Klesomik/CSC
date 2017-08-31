@@ -10,17 +10,14 @@ class InformationCollector
     public:
         InformationCollector ();
 
-        void from_file ();
-        void to_file ();
-        void parsing ();
         void add_statistics (SourceLocation loc, SyntaxStyle &result);
         void print_tokens ();
 
         bool is_token (Token &from, const std::string &to);
+        SourceLocation preprocessed_to_raw (SourceLocation loc);
+        void simulate (SourceLocation loc);
 
     //private:
-        std::string name, buffer;
-
         std::vector <Token> data;
 
         std::map <SourceLocation, int> table;
@@ -34,51 +31,11 @@ class InformationCollector
 InformationCollector information_collector;
 
 InformationCollector::InformationCollector ():
-	name (),
-	buffer (),
 	data (),
 	table (),
 	spaces_in_tab (4),
 	ci ()
 {
-}
-
-void InformationCollector::from_file ()
-{
-    std::ifstream in (name);
-
-    std::getline (in, buffer, '\0');
-}
-
-void InformationCollector::to_file ()
-{
-	std::ofstream out (name);
-
-	out << buffer;
-}
-
-void InformationCollector::parsing ()
-{
-    std::string spaces (spaces_in_tab, ' ');
-
-    std::string tmp;
-
-    for (int i = 0; i < (int) buffer.size (); i++)
-    {
-        if (buffer[i] == '\n')
-        {
-            if ((tmp.empty ()) || (tmp.back () != '\n'))
-                tmp.push_back (buffer[i]);
-        }
-
-        else if (buffer[i] == '\t')
-            tmp += spaces;
-
-        else
-            tmp.push_back (buffer[i]);
-    }
-
-    buffer = tmp;
 }
 
 void InformationCollector::add_statistics (SourceLocation loc, SyntaxStyle &result)
@@ -127,6 +84,24 @@ bool InformationCollector::is_token (Token &from, const std::string &to)
     }
 
     return buffer == to;
+}
+
+SourceLocation InformationCollector::preprocessed_to_raw (SourceLocation loc)
+{
+	return ci.getSourceManager ().getExpansionLoc (loc);
+}
+
+void InformationCollector::simulate (SourceLocation loc)
+{
+	FullSourceLoc tmp (loc, ci.getSourceManager());
+
+    // TODO: What's the difference between spelling and expansion?
+    // Or, in fact, can we ignore it for raw tokens?
+    // FIXME: We ignore tabs here.
+    int line = tmp.getSpellingLineNumber();
+    int level = tmp.getSpellingColumnNumber() - 1;
+
+	std::cout << "sumulate = (" << line << ", " << level << ")\n"; 
 }
 
 #endif /* INFORMATIONCOLLECTOR_HPP */

@@ -1,10 +1,13 @@
 #include <bits/stdc++.h>
 #include "LogHTML.hpp"
+#include "Frontend//FileSnapshot.hpp"
 #include "Frontend//InformationCollector.hpp"
-#include "Frontend//CodeInformation.hpp"
-#include "Frontend//ClangAST.hpp"
+#include "Frontend//ClangLexicialAnalyzer.hpp"
+#include "Frontend//ClangSyntaxAnalyzer.hpp"
 #include "Backend//Information.hpp"
 
+void CppFrontend ();
+void Backend ();
 void HTMLDump ();
 
 int main (int argc, const char* argv[])
@@ -28,19 +31,30 @@ int main (int argc, const char* argv[])
 	for (int i = 0; i < (int) args.size (); i++)
 		args[i] = argv[i];
 
-	information_collector.name = args[1];
-	information_collector.parsing ();
+	file_snapshot.name = args[1];
+	file_snapshot.from_file ();
+	file_snapshot.parsing ();
 
-	CodeInformation code_information;
-					code_information.fill_raw_tokens ();
-					code_information.fill_table ();
-
-	Detour detour;
-		   detour.start ();
-
+	CppFrontend ();
+	Backend ();
 	HTMLDump ();
 
 	return 0;
+}
+
+void CppFrontend ()
+{
+	ClangLexicialAnalyzer clang_lexicial_analyzer;
+					      clang_lexicial_analyzer.fill_preprocessed_tokens ();
+					      clang_lexicial_analyzer.fill_table ();
+
+	ClangSyntaxAnalyzer clang_syntax_analyzer;
+		                clang_syntax_analyzer.start ();
+}
+
+void Backend ()
+{
+	information.prepare_data ();
 }
 
 // Todo

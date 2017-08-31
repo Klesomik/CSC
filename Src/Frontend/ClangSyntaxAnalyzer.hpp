@@ -1,8 +1,9 @@
-#ifndef CLANGAST_HPP
+#ifndef CLANGSYNTAXANALYZER_HPP
 
-#define CLANGAST_HPP
+#define CLANGSYNTAXANALYZER_HPP
 
 #include "Clang.hpp"
+#include "FileSnapshot.hpp"
 #include "InformationCollector.hpp"
 #include "..//Backend//Information.hpp"
 
@@ -41,24 +42,6 @@ class MyAction : public clang::ASTFrontendAction
         }
 };
 
-class Detour
-{
-    public:
-        Detour ();
-
-        void start ();
-};
-
-Detour::Detour ()
-{
-}
-
-void Detour::start ()
-{
-    /* const bool ret = */
-    clang::tooling::runToolOnCode (new MyAction, information_collector.buffer.c_str ());
-}
-
 bool MyVisitor::VisitTranslationUnitDecl (clang::TranslationUnitDecl *D)
 {
     //D->dump ();
@@ -84,9 +67,29 @@ This visitor visits operators if and else
 */
 bool MyVisitor::VisitIfStmt (clang::IfStmt *D)
 {
+    information_collector.simulate (D->getIfLoc ());
+
     information_collector.add_statistics (D->getIfLoc (), information.data["if"]);
 
     return true;
 }
 
-#endif /* CLANGAST_HPP */
+class ClangSyntaxAnalyzer
+{
+    public:
+        ClangSyntaxAnalyzer ();
+
+        void start ();
+};
+
+ClangSyntaxAnalyzer::ClangSyntaxAnalyzer ()
+{
+}
+
+void ClangSyntaxAnalyzer::start ()
+{
+    /* const bool ret = */
+    clang::tooling::runToolOnCode (new MyAction, file_snapshot.buffer.c_str ());
+}
+
+#endif /* CLANGSYNTAXANALYZER_HPP */

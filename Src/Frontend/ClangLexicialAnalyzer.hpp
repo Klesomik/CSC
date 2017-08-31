@@ -1,6 +1,6 @@
-#ifndef CODEINFORMATION_HPP
+#ifndef CLANGLEXICIALANALYZER_HPP
 
-#define CODEINFORMATION_HPP
+#define CLANGLEXICIALANALYZER_HPP
 
 #include "Clang.hpp"
 #include "InformationCollector.hpp"
@@ -12,10 +12,10 @@ Now we give buffer and get information about formatting
 
 #define ci information_collector.ci
 
-class CodeInformation
+class ClangLexicialAnalyzer
 {
     public:
-        CodeInformation ();
+        ClangLexicialAnalyzer ();
 
         void compiler_instance_init ();
 
@@ -28,12 +28,12 @@ class CodeInformation
     //private:
 };
 
-CodeInformation::CodeInformation ()
+ClangLexicialAnalyzer::ClangLexicialAnalyzer ()
 {
     compiler_instance_init ();
 }
 
-void CodeInformation::compiler_instance_init ()
+void ClangLexicialAnalyzer::compiler_instance_init ()
 {
     ci.createDiagnostics(); // create DiagnosticsEngine
 
@@ -49,10 +49,10 @@ void CodeInformation::compiler_instance_init ()
     ci.createSourceManager (ci.getFileManager ()); // create SourceManager
     ci.createPreprocessor  (TU_Complete);          // create Preprocessor
 
-    const clang::FileEntry *file = ci.getFileManager ().getFile (information_collector.name.c_str ());
+    const clang::FileEntry *file = ci.getFileManager ().getFile (file_snapshot.name.c_str ());
     if (!file)
     {
-        llvm::errs () << "File not found: " << information_collector.name << '\n';
+        llvm::errs () << "File not found: " << file_snapshot.name << '\n';
         return;
     }
 
@@ -63,7 +63,7 @@ void CodeInformation::compiler_instance_init ()
     ci.getDiagnosticClient ().BeginSourceFile (ci.getLangOpts (), &ci.getPreprocessor ());
 }
 
-void CodeInformation::fill_raw_tokens ()
+void ClangLexicialAnalyzer::fill_raw_tokens ()
 {
     const llvm::MemoryBuffer *from_file = ci.getSourceManager ().getBuffer (ci.getSourceManager ().getMainFileID ());
     Lexer raw (ci.getSourceManager ().getMainFileID (), from_file, ci.getSourceManager (), ci.getPreprocessor ().getLangOpts ());
@@ -77,7 +77,7 @@ void CodeInformation::fill_raw_tokens ()
     }
 }
 
-void CodeInformation::fill_preprocessed_tokens ()
+void ClangLexicialAnalyzer::fill_preprocessed_tokens ()
 {
     for (Token tok; !tok.is (clang::tok::eof);)
     {
@@ -90,10 +90,10 @@ void CodeInformation::fill_preprocessed_tokens ()
     }
 }
 
-void CodeInformation::fill_table ()
+void ClangLexicialAnalyzer::fill_table ()
 {
     for (int i = 0; i < (int) information_collector.data.size (); i++) 
         information_collector.table[information_collector.data[i].getLocation ()] = i;
 }
 
-#endif /* CODEINFORMATION_HPP */
+#endif /* CLANGLEXICIALANALYZER_HPP */
