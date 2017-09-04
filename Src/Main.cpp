@@ -66,7 +66,7 @@ void Backend ()
 // Todo
 void HTMLDump ()
 {
-	LogHTML log ("Result.html");
+	LogHTML log ("..//Result//Result.html");
 
 	log.begin ("pre");
 
