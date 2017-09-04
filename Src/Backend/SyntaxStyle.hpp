@@ -47,7 +47,7 @@ void SyntaxStyle::mediana_first ()
         if (counter[i] > counter[index])
             index = i;
 
-    result.first = counter[index];
+    result.first = index;
 }
 
 void SyntaxStyle::mediana_second ()
@@ -68,7 +68,7 @@ void SyntaxStyle::mediana_second ()
         if (counter[i] > counter[index])
             index = i;
 
-    result.second = counter[index];
+    result.second = index;
 }
 
 void SyntaxStyle::maximum_first ()

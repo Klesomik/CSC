@@ -3,23 +3,24 @@
 #define INFORMATIONCOLLECTOR_HPP
 
 #include "Clang.hpp"
-#include "..//Backend//SyntaxStyle.hpp"
 
 class InformationCollector
 {
     public:
         InformationCollector ();
 
-        void add_statistics (SourceLocation loc, SyntaxStyle &result);
+        std::pair <int, int> add_statistics (int raw_index);
         void print_tokens ();
 
         bool is_token (Token &from, const std::string &to);
-        void simulate (SourceLocation loc);
+        std::pair <int, int> get_raw_location (SourceLocation loc);
+        void increase_current (const std::string& name);
+        int spaces_in_token (Token &from);
 
     //private:
         std::vector <Token> data;
 
-        std::map <SourceLocation, int> table;
+        int current;
 
         CompilerInstance ci;
 };
@@ -29,42 +30,42 @@ InformationCollector information_collector;
 
 InformationCollector::InformationCollector ():
 	data (),
-	table (),
+    current (0),
 	ci ()
 {
 }
 
-void InformationCollector::add_statistics (SourceLocation loc, SyntaxStyle &result)
+std::pair <int, int> InformationCollector::add_statistics (int raw_index)
 {
-    int raw_index = table[loc];
-
-    result.data.push_back (std::pair <int, int> (0, 0));
-
+    std::pair <int, int> tmp;
+    
     // search prefix
     if ((raw_index - 1 >= 0) && (is_token (data[raw_index - 1], " ")))
-    {
-        std::string buffer (Lexer::getSpelling (data[raw_index - 1], ci.getSourceManager (), ci.getLangOpts ()));
-
-        result.data.back ().first += std::count (buffer.begin (), buffer.end (), ' ');
-    }
+        tmp.first += spaces_in_token (data[raw_index - 1]);
 
     // search suffix
     if ((raw_index + 1 < (int) data.size ()) && (is_token (data[raw_index + 1], " ")))
-    {
-        std::string buffer (Lexer::getSpelling (data[raw_index + 1], ci.getSourceManager (), ci.getLangOpts ()));
+        tmp.second += spaces_in_token (data[raw_index + 1]);
 
-        result.data.back ().second += std::count (buffer.begin (), buffer.end (), ' ');
-    }
+    return tmp;
 }
 
 void InformationCollector::print_tokens ()
 {
+    std::cerr << "=====DUMP=====\n";
+
     for (int i = 0; i < (int) data.size (); i++)
     {
         std::cerr << "data[" << i << "] = ";
         ci.getPreprocessor ().DumpToken (data[i]);
         std::cerr << std::endl;
+
+        std::pair <int, int> tmp (get_raw_location (data[i].getLocation ()));
+
+        std::cerr << "simulate = (" << tmp.first << ", " << tmp.second << ")\n";
     }
+
+    std::cerr << "==============\n";
 }
 
 bool InformationCollector::is_token (Token &from, const std::string &to)
@@ -72,29 +73,44 @@ bool InformationCollector::is_token (Token &from, const std::string &to)
     std::string buffer (Lexer::getSpelling (from, ci.getSourceManager (), ci.getLangOpts ()));
 
     // Because Clang's tokens can be like that: "     ".
-    if (to == " ")
-    {
-        for (int i = 0; i < (int) buffer.size(); i++)
-            if (buffer[i] == ' ')
-                return true;
-    }
+    if (isspace (to[0]))
+        return isspace (buffer[0]);
 
     return buffer == to;
 }
 
-void InformationCollector::simulate (SourceLocation loc)
+std::pair <int, int> InformationCollector::get_raw_location (SourceLocation loc)
 {
-    // SourceLocation preprocessed_to_raw (SourceLocation loc);
-
 	FullSourceLoc tmp (loc, ci.getSourceManager());
 
-    // TODO: What's the difference between spelling and expansion?
-    // Or, in fact, can we ignore it for raw tokens?
-    // FIXME: We ignore tabs here.
     int line = tmp.getSpellingLineNumber();
-    int level = tmp.getSpellingColumnNumber() - 1;
+    int level = tmp.getSpellingColumnNumber();
 
-	std::cout << "sumulate = (" << line << ", " << level << ")\n"; 
+	return std::make_pair (line, level); 
+}
+
+void InformationCollector::increase_current (const std::string& name)
+{
+    while ((current < (int) data.size ()) && (!is_token (data[current], name)))
+        current++;
+}
+
+int InformationCollector::spaces_in_token (Token &from)
+{
+    std::string buffer (Lexer::getSpelling (from, ci.getSourceManager (), ci.getLangOpts ()));
+
+    int result = 0;
+
+    for (int i = 0; i < (int) buffer.size (); i++)
+    {
+        if (buffer[i] == ' ')
+            result++;
+
+        else if (buffer[i] == '\t')
+            result += file_snapshot.spaces_in_tab;
+    }
+
+    return result;
 }
 
 #endif /* INFORMATIONCOLLECTOR_HPP */

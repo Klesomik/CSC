@@ -21,9 +21,6 @@ class ClangLexicialAnalyzer
 
         void fill_raw_tokens ();
         void fill_preprocessed_tokens ();
-        void fill_table ();
-
-        bool is_token (Token &from, const std::string &to);
 
     //private:
 };
@@ -69,9 +66,12 @@ void ClangLexicialAnalyzer::fill_raw_tokens ()
     Lexer raw (ci.getSourceManager ().getMainFileID (), from_file, ci.getSourceManager (), ci.getPreprocessor ().getLangOpts ());
     raw.SetKeepWhitespaceMode (true);
 
-    for (Token tok; !tok.is (clang::tok::eof);)
+    for (Token tok;;)
     {
         raw.LexFromRawLexer (tok);
+
+        if (tok.is (clang::tok::eof))
+            break;
 
         information_collector.data.push_back (tok);
     }
@@ -79,21 +79,18 @@ void ClangLexicialAnalyzer::fill_raw_tokens ()
 
 void ClangLexicialAnalyzer::fill_preprocessed_tokens ()
 {
-    for (Token tok; !tok.is (clang::tok::eof);)
+    for (Token tok;;)
     {
         ci.getPreprocessor ().Lex (tok);
+
+        if (tok.is (clang::tok::eof))
+            break;
 
         if (ci.getDiagnostics ().hasErrorOccurred ())
             break;
 
         information_collector.data.push_back (tok);
     }
-}
-
-void ClangLexicialAnalyzer::fill_table ()
-{
-    for (int i = 0; i < (int) information_collector.data.size (); i++) 
-        information_collector.table[information_collector.data[i].getLocation ()] = i;
 }
 
 #endif /* CLANGLEXICIALANALYZER_HPP */

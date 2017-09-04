@@ -27,4 +27,4 @@ LIBS += $(shell $(LLVMCONF) --ldflags) \
 LIBS += $(shell $(LLVMCONF) --system-libs)
 
 all:
-	$(CXX) $(CXXFLAGS) -o ./a.out Main.cpp $(LIBS)
+	$(CXX) $(CXXFLAGS) -o ./Main.out Main.cpp $(LIBS)

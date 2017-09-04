@@ -67,9 +67,13 @@ This visitor visits operators if and else
 */
 bool MyVisitor::VisitIfStmt (clang::IfStmt *D)
 {
-    information_collector.simulate (D->getIfLoc ());
+    information_collector.increase_current ("if");
 
-    information_collector.add_statistics (D->getIfLoc (), information.data["if"]);
+    std::pair <int, int> tmp (information_collector.add_statistics (information_collector.current));
+
+    information.data["if"].data.push_back (tmp); 
+
+    information_collector.current++;
 
     return true;
 }
@@ -79,8 +83,8 @@ class ClangSyntaxAnalyzer
     public:
         ClangSyntaxAnalyzer ();
 
-        void prepare ();
-        CompilerInvocation* makeInvocation ();
+        //void prepare ();
+        //CompilerInvocation* makeInvocation ();
         void start ();
 };
 
@@ -88,7 +92,7 @@ ClangSyntaxAnalyzer::ClangSyntaxAnalyzer ()
 {
 }
 
-void ClangSyntaxAnalyzer::prepare ()
+/*void ClangSyntaxAnalyzer::prepare ()
 {
     //instance.createDiagnostics();
 
@@ -98,9 +102,9 @@ void ClangSyntaxAnalyzer::prepare ()
         FILENAME, 
         FrontendOptions::getInputKindForExtension(FILENAME)
     );
-}
+}*/
 
-CompilerInvocation* ClangSyntaxAnalyzer::makeInvocation ()
+/*CompilerInvocation* ClangSyntaxAnalyzer::makeInvocation ()
 {
     using namespace clang;
     auto invocation = new CompilerInvocation();
@@ -132,15 +136,16 @@ CompilerInvocation* ClangSyntaxAnalyzer::makeInvocation ()
     }
 
     return invocation;
-}
+}*/
 
 void ClangSyntaxAnalyzer::start ()
 {
-    //const bool ret = clang::tooling::runToolOnCode (new MyAction, file_snapshot.buffer.c_str ());
+    /*const bool ret =*/ 
+    clang::tooling::runToolOnCode (new MyAction, file_snapshot.buffer.c_str ());
 
-    MyAction my_action;
+    /*MyAction my_action;
 
-    ci.ExecuteAction (my_action);
+    ci.ExecuteAction (my_action);*/
 }
 
 #endif /* CLANGSYNTAXANALYZER_HPP */
