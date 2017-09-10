@@ -3,20 +3,24 @@
 #define CLANGSYNTAXANALYZER_HPP
 
 #include "Clang.hpp"
-#include "FileSnapshot.hpp"
 #include "InformationCollector.hpp"
 #include "..//Backend//Information.hpp"
 
 class MyVisitor : public clang::RecursiveASTVisitor<MyVisitor>
 {
     public:
-        bool VisitTranslationUnitDecl (clang::TranslationUnitDecl *D);
+        void apply_node (int value);
 
-        // Class' declarations
-        bool VisitCXXRecordDecl (clang::CXXRecordDecl *D);
-
-        // If's declarations
+        bool VisitTranslationUnitDecl (TranslationUnitDecl *D);
+        bool VisitCXXRecordDecl (CXXRecordDecl *D);
+        bool VisitFunctionDecl(FunctionDecl* decl);
+        bool VisitCallExpr (CallExpr* expr);
+        bool VisitNamedDecl(NamedDecl* decl);
+        bool VisitBinaryOperator(BinaryOperator* expr);
+        bool VisitReturnStmt (ReturnStmt* stmt);
         bool VisitIfStmt (clang::IfStmt *D);
+        bool VisitWhileStmt (WhileStmt* stmt);
+        bool VisitForStmt (ForStmt* stmt);
 };
 
 class MyConsumer : public clang::ASTConsumer
@@ -24,11 +28,11 @@ class MyConsumer : public clang::ASTConsumer
     public:
         virtual void HandleTranslationUnit (clang::ASTContext &Context) override
         {
-            _visitor.TraverseDecl (Context.getTranslationUnitDecl ());
+            visitor_.TraverseDecl (Context.getTranslationUnitDecl ());
         }
 
     private:
-        MyVisitor _visitor;
+        MyVisitor visitor_;
 };
 
 class MyAction : public clang::ASTFrontendAction
@@ -42,17 +46,23 @@ class MyAction : public clang::ASTFrontendAction
         }
 };
 
-bool MyVisitor::VisitTranslationUnitDecl (clang::TranslationUnitDecl *D)
+void MyVisitor::apply_node (int value)
+{
+    information_collector.increase_current (information.table[value]);
+
+    std::pair <int, int> tmp (information_collector.add_statistics ());
+
+    information.data[value].data.push_back (tmp);
+}
+
+bool MyVisitor::VisitTranslationUnitDecl (TranslationUnitDecl *D)
 {
     //D->dump ();
 
     return true;
 }
 
-/*
-This visitor visits declarations of structs/classes
-*/
-bool MyVisitor::VisitCXXRecordDecl (clang::CXXRecordDecl *D)
+bool MyVisitor::VisitCXXRecordDecl (CXXRecordDecl *D)
 {
     information.result[Information::Class].add_statistics (D->getIdentifier ()->getName ());
 
@@ -62,18 +72,86 @@ bool MyVisitor::VisitCXXRecordDecl (clang::CXXRecordDecl *D)
     return true;
 }
 
-/*
-This visitor visits operators if and else
-*/
+bool MyVisitor::VisitFunctionDecl (FunctionDecl* decl)
+{
+    /*//llvm::errs() << "Found function '" << decl->getNameAsString() << "'\n";
+    if (!decl->getBody()) return true;
+
+    applyTokenExtraClass(decl->getLocEnd(), EXTRA_FUNCTION_RBRACE);
+
+    FunctionTypeLoc info = decl->getTypeSourceInfo()->getTypeLoc().castAs<FunctionTypeLoc>();
+
+    if (decl->getNumParams() > 0)
+    {
+        applyTokenExtraClass(info.getLParenLoc(), EXTRA_FUNCTION_DECL_LPAREN);
+        applyTokenExtraClass(info.getRParenLoc(), EXTRA_FUNCTION_DECL_RPAREN);
+    }
+    else
+    {
+        applyTokenExtraClass(info.getLParenLoc(), EXTRA_EMPTY_FUNCTION_DECL_LPAREN);
+        applyTokenExtraClass(info.getRParenLoc(), EXTRA_EMPTY_FUNCTION_DECL_RPAREN);
+    }*/
+
+    return true;
+}
+
+bool MyVisitor::VisitCallExpr (CallExpr* expr)
+{
+    /*SourceLocation lParen = getNextPrepToken(expr->getCalleeDecl()->getLocEnd()).getLocation();
+    SourceLocation rParen = expr->getRParenLoc();
+
+    if (expr->getNumArgs() > 0)
+    {
+        applyTokenExtraClass(lParen, EXTRA_FUNCTION_CALL_LPAREN);
+        applyTokenExtraClass(rParen, EXTRA_FUNCTION_CALL_RPAREN);
+    }
+    else
+    {
+        applyTokenExtraClass(lParen, EXTRA_EMPTY_FUNCTION_CALL_LPAREN);
+        applyTokenExtraClass(rParen, EXTRA_EMPTY_FUNCTION_CALL_RPAREN);
+    }*/
+
+    return true;
+}
+
+bool MyVisitor::VisitNamedDecl (NamedDecl* decl)
+{
+    //std::cout << decl->getNameAsString () << '\n';
+
+    return true;
+}
+
+bool MyVisitor::VisitBinaryOperator (BinaryOperator* expr)
+{
+    apply_node (Information::BinaryOperator);
+
+    return true;
+}
+
+bool MyVisitor::VisitReturnStmt (ReturnStmt* stmt)
+{
+    apply_node (Information::Return);
+
+    return true;
+}
+
 bool MyVisitor::VisitIfStmt (clang::IfStmt *D)
 {
-    information_collector.increase_current ("if");
+    apply_node (Information::If);
 
-    std::pair <int, int> tmp (information_collector.add_statistics (information_collector.current));
+    return true;
+}
 
-    information.data["if"].data.push_back (tmp); 
+bool MyVisitor::VisitWhileStmt (WhileStmt* stmt)
+{
+    apply_node (Information::While);
 
-    information_collector.current++;
+    return true;
+}
+
+bool MyVisitor::VisitForStmt (ForStmt* stmt)
+{
+    apply_node (Information::For);
 
     return true;
 }

@@ -7,22 +7,30 @@ class NameStyle
 	public:
 		NameStyle ();
 
+		void init_data ();
+
 		bool check_style (const std::string& name, const std::string& style);
 
 		void add_statistics (const std::string& name);
 
-		std::map <std::string, int> data;
+		std::vector <std::pair <std::string, int>> data;
 
 		int no_style;
 };
 
 NameStyle::NameStyle ():
-	data ({ { "[a-z]+([A-Z]+[a-z]*)+",           0 },    // camelCase
-			{ "[a-z]+(_[a-z]+)*",                0 },    // camel_case 
-			{ "([A-Z]+[a-z]*)+",                 0 },    // CamelCase
-			{ "([A-Z]+[a-z]*)+(_[A-Z]+[a-z]*)+", 0 } }), // Camel_Case
+	data (),
 	no_style (0)		 
 {
+	init_data ();
+}
+
+void NameStyle::init_data ()
+{
+	data.push_back ({ "[a-z]+([A-Z]+[a-z]*)+",           0 }); // camelCase
+	data.push_back ({ "[a-z]+(_[a-z]+)*",                0 }); // camel_case
+	data.push_back ({ "([A-Z]+[a-z]*)+",                 0 }); // CamelCase
+	data.push_back ({ "([A-Z]+[a-z]*)+(_[A-Z]+[a-z]*)+", 0 }); // Camel_Case
 }
 
 bool NameStyle::check_style (const std::string& name, const std::string& style)
@@ -34,11 +42,11 @@ bool NameStyle::check_style (const std::string& name, const std::string& style)
 
 void NameStyle::add_statistics (const std::string& name)
 {
-	for (auto it = data.begin (); it != data.end (); it++)
+	for (int i = 0; i < (int) data.size (); i++)
 	{
-		if (check_style (name, it->first))
+		if (check_style (name, data[i].first))
 		{
-			it->second++;
+			data[i].second++;
 
 			return;
 		}

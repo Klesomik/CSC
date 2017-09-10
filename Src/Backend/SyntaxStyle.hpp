@@ -31,6 +31,9 @@ SyntaxStyle::SyntaxStyle ():
 
 void SyntaxStyle::mediana_first ()
 {
+    if (data.empty ())
+        return;
+
     int size = data[0].first;
 
     for (int i = 1; i < (int) data.size (); i++)
@@ -52,6 +55,9 @@ void SyntaxStyle::mediana_first ()
 
 void SyntaxStyle::mediana_second ()
 {
+    if (data.empty ())
+        return;
+    
     int size = data[0].second;
 
     for (int i = 1; i < (int) data.size (); i++)

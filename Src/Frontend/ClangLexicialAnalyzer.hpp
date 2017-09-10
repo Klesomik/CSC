@@ -5,11 +5,6 @@
 #include "Clang.hpp"
 #include "InformationCollector.hpp"
 
-/*
-This class makes all work with Clang API
-Now we give buffer and get information about formatting
-*/
-
 #define ci information_collector.ci
 
 class ClangLexicialAnalyzer

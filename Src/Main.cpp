@@ -10,6 +10,8 @@ void Prepare (int argc, const char* argv[], std::vector <std::string>& args);
 void CppFrontend ();
 void Backend ();
 void HTMLDump ();
+void WriteCode ();
+void WriteResult ();
 
 int main (int argc, const char* argv[])
 {
@@ -17,8 +19,8 @@ int main (int argc, const char* argv[])
 	Prepare (argc, argv, args);
 
 	CppFrontend ();
-	Backend ();
-	HTMLDump ();
+	//Backend ();
+	//HTMLDump ();
 
 	return 0;
 }
@@ -61,6 +63,10 @@ void CppFrontend ()
 void Backend ()
 {
 	information.prepare_data ();
+
+	std::pair <int, int> tmp (information.data[Information::For].result);
+
+	std::cout << "(" << tmp.first << ", " << tmp.second << ")\n";
 }
 
 // Todo
@@ -68,10 +74,38 @@ void HTMLDump ()
 {
 	LogHTML log ("..//Result//Result.html");
 
-	log.begin ("pre");
+	log.output ("<!DOCTYPE html>");
+	log.output ("<html>");
+	log.output ("<head>");
+	log.output ("    <meta charset="UTF-8">");
+	log.output ("    <title>Result</title>");
+	log.output ("</head>");
+	log.output ("<body>");
 
-	for (int i = 0; i < (int) file_snapshot.buffer.size (); i++)
-		fprintf (log.data, "%c", file_snapshot.buffer[i]);
+	WriteCode ();
+	WriteRessult ();
+	
+	log.output ("</body>");
+	log.output ("</html>");
+}
 
-	log.end ("pre");
+void WriteCode ()
+{
+	const std::string indent (8, ' ');
+
+	std::map <char, std::string> replace ({ {  ' ', "&nbsp" },
+											{ '\n',      "" } });
+
+	log.output ("    <code>");
+
+	log.output ("    </code>");
+}
+
+void WriteResult ()
+{
+	const std::string indent (8, ' ');
+
+	log.output ("    <result>");
+
+	log.output ("    </result>");
 }

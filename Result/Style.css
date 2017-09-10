@@ -1,0 +1,21 @@
+/* good interval */
+GI 
+{
+    background-color: #DBFF94;
+}
+
+/* bad interval */
+BI 
+{
+    border-left: solid #FF8080;
+}
+
+/* assepted name */
+AN 
+{
+}
+
+/* rejected name */
+RN
+{
+}

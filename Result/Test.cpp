@@ -16,5 +16,8 @@ int main ()
 		a = 9;
 	}
 
+				for (int i = 0; i < 5; i++)
+					a += 10;
+
 	return 0;
 }

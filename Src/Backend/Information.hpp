@@ -10,8 +10,15 @@ class Information
 	public:
 		Information ();
 
-		void result_init ();
 		void prepare_data ();
+
+		enum
+		{
+			If,
+			For,
+			While,
+			Return
+		};
 
 		enum
 		{
@@ -19,36 +26,36 @@ class Information
 			Method,
 			Function,
 			LocalVar,
-			GlobalVar
+			GlobalVar,
+			Param
 		};
 
-		std::map <std::string, SyntaxStyle> data;
+		std::vector <SyntaxStyle> data;
 
 		std::vector <NameStyle> result;
+
+		std::map <int, std::string> table;
 };
 
 // TODO: delete global object
 Information information;
 
 Information::Information ():
-	data   (),
-	result (4)
+	data   (4),
+	result (6),
+	table  ({ {     If,     "if" },
+			  {    For,    "for" },
+			  {  While,  "while" },
+			  { Return, "return" } })
 {
-}
-
-void Information::result_init ()
-{
-    SyntaxStyle tmp;
-
-    data.insert (std::make_pair ("if", tmp));
 }
 
 void Information::prepare_data ()
 {
-    for (auto it = data.begin (); it != data.end (); it++)
+    for (int i = 0; i < (int) data.size (); i++)
     {
-        it->second.mediana_first ();
-        it->second.mediana_second ();
+        data[i].mediana_first ();
+        data[i].mediana_second ();
     }
 }
 
