@@ -10,6 +10,7 @@ class MyVisitor : public clang::RecursiveASTVisitor<MyVisitor>
 {
     public:
         void apply_node (int value);
+        void apply_name (int value, const std::string& name);
 
         bool VisitTranslationUnitDecl (TranslationUnitDecl *D);
         bool VisitCXXRecordDecl (CXXRecordDecl *D);
@@ -55,6 +56,14 @@ void MyVisitor::apply_node (int value)
     information.data[value].data.push_back (tmp);
 }
 
+void MyVisitor::apply_name (int value, const std::string& name)
+{
+    information.result[value].add_statistics (name);
+
+    information_collector.increase_current (name);
+    information_collector.kind_of_name[information_collector.current] = value;
+}
+
 bool MyVisitor::VisitTranslationUnitDecl (TranslationUnitDecl *D)
 {
     //D->dump ();
@@ -64,10 +73,10 @@ bool MyVisitor::VisitTranslationUnitDecl (TranslationUnitDecl *D)
 
 bool MyVisitor::VisitCXXRecordDecl (CXXRecordDecl *D)
 {
-    information.result[Information::Class].add_statistics (D->getIdentifier ()->getName ());
+    apply_name (Information::Class, D->getIdentifier ()->getName ());
 
     for (auto it : D->methods ())
-        information.result[Information::Method].add_statistics (it->getIdentifier ()->getName ());
+        apply_name (Information::Method, it->getIdentifier ()->getName ());
 
     return true;
 }
@@ -123,7 +132,7 @@ bool MyVisitor::VisitNamedDecl (NamedDecl* decl)
 
 bool MyVisitor::VisitBinaryOperator (BinaryOperator* expr)
 {
-    apply_node (Information::BinaryOperator);
+    //apply_node (Information::BinaryOperator);
 
     return true;
 }

@@ -61,8 +61,11 @@ void InformationCollector::print_tokens ()
     for (int i = 0; i < (int) data.size (); i++)
     {
         std::cerr << "data[" << i << "] = ";
-        ci.getPreprocessor ().DumpToken (data[i]);
-        std::cerr << std::endl;
+        //ci.getPreprocessor ().DumpToken (data[i]);
+        //std::cerr << std::endl;
+
+        std::string buffer (Lexer::getSpelling (data[i], ci.getSourceManager (), ci.getLangOpts ()));
+        std::cerr << buffer << '\n';
 
         std::pair <int, int> tmp (get_raw_location (data[i].getLocation ()));
 
