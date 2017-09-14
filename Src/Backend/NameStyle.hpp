@@ -13,6 +13,8 @@ class NameStyle
 
 		void add_statistics (const std::string& name);
 
+		bool is_valid_name (const std::string& name);
+
 		std::vector <std::pair <std::string, int>> data;
 
 		int no_style;
@@ -53,6 +55,17 @@ void NameStyle::add_statistics (const std::string& name)
 	}
 
 	no_style++;
+}
+
+bool NameStyle::is_valid_name (const std::string& name)
+{
+	std::pair <std::string, int> result (data[0]);
+
+	for (int i = 1; i < (int) data.size (); i++)
+		if (data[i].second > result.second)
+			result = data[i];
+
+	return check_style (name, result.first);
 }
 
 #endif /* NAMESTYLE_HPP */

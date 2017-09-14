@@ -1,3 +1,23 @@
+struct Hello
+{
+};
+
+struct close
+{
+};
+
+struct Just
+{
+};
+
+struct kLoc
+{
+};
+
+struct Project
+{
+};
+
 int main ()
 {
 	int a = 5;

@@ -3,9 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <title>Result</title>
+    <link rel="stylesheet" href="Style.css">
 </head>
 <body>
     <code>
+        <AN>struct</AN>
+        <GI>&nbsp</GI>
+        <AN>Hello</AN>
+        <GI><br/></GI>
+        <AN>{</AN>
+        <GI><br/></GI>
+        <AN>}</AN>
+        <AN>;</AN>
+        <GI><br/><br/></GI>
+        <AN>struct</AN>
+        <GI>&nbsp</GI>
+        <RN>close</RN>
+        <GI><br/></GI>
+        <AN>{</AN>
+        <GI><br/></GI>
+        <AN>}</AN>
+        <AN>;</AN>
+        <GI><br/><br/></GI>
+        <AN>struct</AN>
+        <GI>&nbsp</GI>
+        <AN>Just</AN>
+        <GI><br/></GI>
+        <AN>{</AN>
+        <GI><br/></GI>
+        <AN>}</AN>
+        <AN>;</AN>
+        <GI><br/><br/></GI>
+        <AN>struct</AN>
+        <GI>&nbsp</GI>
+        <RN>kLoc</RN>
+        <GI><br/></GI>
+        <AN>{</AN>
+        <GI><br/></GI>
+        <AN>}</AN>
+        <AN>;</AN>
+        <GI><br/><br/></GI>
+        <AN>struct</AN>
+        <GI>&nbsp</GI>
+        <AN>Project</AN>
+        <GI><br/></GI>
+        <AN>{</AN>
+        <GI><br/></GI>
+        <AN>}</AN>
+        <AN>;</AN>
+        <GI><br/><br/></GI>
         <AN>int</AN>
         <GI>&nbsp</GI>
         <AN>main</AN>

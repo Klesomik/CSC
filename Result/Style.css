@@ -13,9 +13,11 @@ BI
 /* assepted name */
 AN 
 {
+	color: black;
 }
 
 /* rejected name */
 RN
 {
+	color: gray;
 }

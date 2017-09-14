@@ -70,6 +70,8 @@ void ClangLexicialAnalyzer::fill_raw_tokens ()
 
         information_collector.data.push_back (tok);
     }
+
+    information_collector.kind_of_name.resize (information_collector.data.size (), -1);
 }
 
 void ClangLexicialAnalyzer::fill_preprocessed_tokens ()
@@ -86,6 +88,8 @@ void ClangLexicialAnalyzer::fill_preprocessed_tokens ()
 
         information_collector.data.push_back (tok);
     }
+
+    information_collector.kind_of_name.resize (information_collector.data.size (), -1);
 }
 
 #endif /* CLANGLEXICIALANALYZER_HPP */
