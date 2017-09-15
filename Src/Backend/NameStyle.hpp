@@ -44,17 +44,20 @@ bool NameStyle::check_style (const std::string& name, const std::string& style)
 
 void NameStyle::add_statistics (const std::string& name)
 {
+	bool flag = false;
+
 	for (int i = 0; i < (int) data.size (); i++)
 	{
 		if (check_style (name, data[i].first))
 		{
 			data[i].second++;
 
-			return;
+			flag = true;
 		}
 	}
 
-	no_style++;
+	if (!flag)
+		no_style++;
 }
 
 bool NameStyle::is_valid_name (const std::string& name)

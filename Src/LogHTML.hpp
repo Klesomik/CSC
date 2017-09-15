@@ -65,7 +65,7 @@ void LogHTML::close ()
 
 void LogHTML::begin (const std::string& tag)
 {
-	fprintf (data, "<%s>\n", tag.c_str ());
+	fprintf (data, "<%s>", tag.c_str ());
 }
 
 void LogHTML::end (const std::string& tag)

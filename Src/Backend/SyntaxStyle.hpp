@@ -13,11 +13,12 @@ class SyntaxStyle
     public:
     	SyntaxStyle ();
 
-        void mediana_first ();
-        void mediana_second ();
-        void maximum_first ();
-        void maximum_second ();
+        void mediana_prefix ();
+        void mediana_suffix ();
+        void maximum_prefix ();
+        void maximum_suffix ();
 
+        //Every std::pair <int, int> contains prefix and suffix of spaces
         std::vector <std::pair <int, int>> data;
 
         std::pair <int, int> result;
@@ -29,7 +30,7 @@ SyntaxStyle::SyntaxStyle ():
 {
 }
 
-void SyntaxStyle::mediana_first ()
+void SyntaxStyle::mediana_prefix ()
 {
     if (data.empty ())
         return;
@@ -53,7 +54,7 @@ void SyntaxStyle::mediana_first ()
     result.first = index;
 }
 
-void SyntaxStyle::mediana_second ()
+void SyntaxStyle::mediana_suffix ()
 {
     if (data.empty ())
         return;
@@ -77,7 +78,7 @@ void SyntaxStyle::mediana_second ()
     result.second = index;
 }
 
-void SyntaxStyle::maximum_first ()
+void SyntaxStyle::maximum_prefix ()
 {
     result.first = data[0].first;
 
@@ -87,7 +88,7 @@ void SyntaxStyle::maximum_first ()
     result.first /= data.size ();
 }
 
-void SyntaxStyle::maximum_second ()
+void SyntaxStyle::maximum_suffix ()
 {
     result.second = data[0].second;
 

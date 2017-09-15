@@ -13,7 +13,7 @@ class Answer
 		void write_code ();
 		void write_result ();
 		void prepare (std::string& message);
-		bool check_name (int index);
+		bool check_name (int index, const std::string& buffer);
 
 		LogHTML log;
 };
@@ -45,40 +45,31 @@ void Answer::write_code ()
 
 	for (int i = 0; i < (int) information_collector.data.size (); i++)
 	{
+		log.output ("%s", indent.c_str ());
+
+		std::string buffer (Lexer::getSpelling (information_collector.data[i], ci.getSourceManager (), ci.getLangOpts ()));
+
+		std::string tag;
+
 		if (information_collector.is_token (information_collector.data[i], " "))
 		{
-			log.output ("%s", indent.c_str ());
-
-			log.output ("<GI>");
-
-			std::string buffer (Lexer::getSpelling (information_collector.data[i], ci.getSourceManager (), ci.getLangOpts ()));
 			prepare (buffer);
 
-			log.output ("%s", buffer.c_str ());
-
-			log.output ("</GI>\n");
+			tag = "GI";
 		}
 
 		else
 		{
-			log.output ("%s", indent.c_str ());
+			if (check_name (i, buffer))
+				tag = "AN";
 
-			std::string open_tag ("<AN>"), close_tag ("</AN>");
-
-			if (!check_name (i))
-			{
-				open_tag = "<RN>";
-				close_tag = "</RN>";
-			}
-
-			log.output ("%s", open_tag.c_str ());
-
-			std::string buffer (Lexer::getSpelling (information_collector.data[i], ci.getSourceManager (), ci.getLangOpts ()));
-
-			log.output ("%s", buffer.c_str ());
-
-			log.output ("%s\n", close_tag.c_str ());
+			else
+				tag = "RN";
 		}
+
+		log.begin (tag);
+		log.output ("%s", buffer.c_str ());
+		log.end (tag);
 	}
 
 	log.output ("    </code>\n");
@@ -124,10 +115,8 @@ void Answer::prepare (std::string& message)
 	message = tmp;
 }
 
-bool Answer::check_name (int index)
+bool Answer::check_name (int index, const std::string& buffer)
 {
-	std::string buffer (Lexer::getSpelling (information_collector.data[index], ci.getSourceManager (), ci.getLangOpts ()));
-
 	int tmp = information_collector.kind_of_name[index];
 
 	if (tmp == -1)

@@ -54,8 +54,8 @@ void Information::prepare_data ()
 {
     for (int i = 0; i < (int) data.size (); i++)
     {
-        data[i].mediana_first ();
-        data[i].mediana_second ();
+        data[i].mediana_prefix ();
+        data[i].mediana_suffix ();
     }
 }
 
