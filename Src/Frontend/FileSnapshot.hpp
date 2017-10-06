@@ -56,19 +56,19 @@ void FileSnapshot::parsing ()
 
     std::string tmp;
 
-    for (int i = 0; i < (int) buffer.size (); i++)
+    for (const auto& it : buffer)
     {
-        if (buffer[i] == '\n')
+        if (it == '\n')
         {
             if ((tmp.empty ()) || (tmp.back () != '\n'))
-                tmp.push_back (buffer[i]);
+                tmp.push_back (it);
         }
 
-        else if (buffer[i] == '\t')
+        else if (it == '\t')
             tmp += spaces;
 
         else
-            tmp.push_back (buffer[i]);
+            tmp.push_back (it);
     }
 
     buffer = tmp;
@@ -76,8 +76,8 @@ void FileSnapshot::parsing ()
 
 void FileSnapshot::print_buffer ()
 {
-    for (int i = 0; i < (int) file_snapshot.buffer.size (); i++)
-        printf ("buffer[%d] = |%c|\n", i, file_snapshot.buffer[i]);
+    for (int i = 0; i < (int) buffer.size (); i++)
+        printf ("buffer[%d] = |%c|\n", i, buffer[i]);
 }
 
 #endif /* FILESNAPSHOT_HPP */

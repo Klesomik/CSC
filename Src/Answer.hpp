@@ -10,6 +10,8 @@ class Answer
 		Answer (const std::string& name);
 		~Answer ();
 
+		void print_indent (int indent);
+
 		void write_code ();
 		void write_result ();
 		void prepare (std::string& message);
@@ -37,15 +39,21 @@ Answer::~Answer ()
 	log.output ("</html>\n");
 }
 
+void Answer::print_indent (int indent)
+{
+	const std::string buffer (indent, ' ');
+
+	log.output ("%s", buffer.c_str ());
+}
+
 void Answer::write_code ()
 {
-	const std::string indent (8, ' ');
-
-	log.output ("    <code>\n");
+	print_indent (4);
+	log.output ("<code>\n");
 
 	for (int i = 0; i < (int) information_collector.data.size (); i++)
 	{
-		log.output ("%s", indent.c_str ());
+		print_indent (8);
 
 		std::string buffer (Lexer::getSpelling (information_collector.data[i], ci.getSourceManager (), ci.getLangOpts ()));
 
@@ -72,16 +80,17 @@ void Answer::write_code ()
 		log.end (tag);
 	}
 
-	log.output ("    </code>\n");
+	print_indent (4);
+	log.output ("</code>\n");
 }
 
 void Answer::write_result ()
 {
-	const std::string indent (8, ' ');
+	print_indent (4);
+	log.output ("<result>\n");
 
-	log.output ("    <result>\n");
-
-	log.output ("    </result>\n");
+	print_indent (4);
+	log.output ("</result>\n");
 }
 
 void Answer::prepare (std::string& message)

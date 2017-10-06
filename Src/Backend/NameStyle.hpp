@@ -46,11 +46,11 @@ void NameStyle::add_statistics (const std::string& name)
 {
 	bool flag = false;
 
-	for (int i = 0; i < (int) data.size (); i++)
+	for (auto& it : data)
 	{
-		if (check_style (name, data[i].first))
+		if (check_style (name, it.first))
 		{
-			data[i].second++;
+			it.second++;
 
 			flag = true;
 		}

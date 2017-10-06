@@ -42,8 +42,8 @@ void SyntaxStyle::mediana_prefix ()
 
     std::vector <int> counter (size + 1);
 
-    for (int i = 0; i < (int) data.size (); i++)
-        counter[data[i].first]++;
+    for (auto& it : data)
+        counter[it.first]++;
 
     int index = 0;
 
@@ -66,8 +66,8 @@ void SyntaxStyle::mediana_suffix ()
 
     std::vector <int> counter (size + 1);
 
-    for (int i = 0; i < (int) data.size (); i++)
-        counter[data[i].second]++;
+    for (auto& it : data)
+        counter[it.second]++;
 
     int index = 0;
 

@@ -52,10 +52,10 @@ Information::Information ():
 
 void Information::prepare_data ()
 {
-    for (int i = 0; i < (int) data.size (); i++)
+	for (auto& it : data)
     {
-        data[i].mediana_prefix ();
-        data[i].mediana_suffix ();
+        it.mediana_prefix ();
+        it.mediana_suffix ();
     }
 }
 

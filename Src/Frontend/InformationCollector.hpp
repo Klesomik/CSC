@@ -108,12 +108,12 @@ int InformationCollector::spaces_in_token (Token &from)
 
     int result = 0;
 
-    for (int i = 0; i < (int) buffer.size (); i++)
+    for (const auto& it : buffer)
     {
-        if (buffer[i] == ' ')
+        if (it == ' ')
             result++;
 
-        else if (buffer[i] == '\t')
+        else if (it == '\t')
             result += file_snapshot.spaces_in_tab;
     }
 
